@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Единая база исторической реконструкции - Главная</title>
+    
+    <!-- Favicon - эмодзи свитка 📜 -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%238b4513%22>📜</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%238b4513%22>📜</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 16px;
+            background-image: url('fon.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 20, 10, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-top: 60px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding-top: 80px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding-top: 90px;
+                padding-left: 4px;
+                padding-right: 4px;
+            }
+            
+            body {
+                padding: 8px;
+            }
+        }
+        
+        /* Кнопка "Предложить" */
+        .feedback-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: linear-gradient(135deg, #e6a336, #d1891c);
+            color: #333;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 20px rgba(139, 69, 19, 0.4);
+            z-index: 1000;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 2px solid #c17e1a;
+            text-decoration: none;
+        }
+        
+        .feedback-button:hover {
+            background: linear-gradient(135deg, #d1891c, #b8731a);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 69, 19, 0.5);
+            color: #333;
+        }
+        
+        .feedback-button:active {
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .feedback-button {
+                bottom: 20px;
+                right: 20px;
+                padding: 12px 20px;
+                font-size: 0.9rem;
+                border-radius: 40px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .feedback-button {
+                bottom: 15px;
+                right: 15px;
+                padding: 10px 16px;
+                font-size: 0.8rem;
+                gap: 6px;
+                border-radius: 30px;
+            }
+            
+            .feedback-button span:last-child {
+                font-size: 0.75rem;
+            }
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 30px 25px;
+            background: rgba(245, 235, 220, 0.95);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(139, 69, 19, 0.3);
+            border: 2px solid #d4a574;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 15px;
+                margin-bottom: 20px;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            header {
+                padding: 16px 12px;
+                margin-bottom: 16px;
+                border-radius: 10px;
+            }
+        }
+        
+        h1 {
+            font-family: 'Cinzel', serif;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+            color: #333;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: 900;
+            line-height: 1.2;
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5rem;
+                margin-bottom: 10px;
+            }
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #555;
+            font-style: italic;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+        
+        @media (max-width: 768px) {
+            .subtitle {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .subtitle {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+        }
+        
+        .nav-menu {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        @media (max-width: 992px) {
+            .nav-menu {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                grid-template-columns: 1fr;
+                gap: 16px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        .nav-card {
+            background: linear-gradient(to bottom, #fef9f3 0%, #f5ebd8 100%);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(139, 69, 19, 0.3);
+            transition: transform 0.4s, box-shadow 0.4s;
+            border: 2px solid #d4a574;
+            text-decoration: none;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            min-height: 300px;
+        }
+        
+        .nav-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(139, 69, 19, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-card {
+                min-height: 240px;
+                border-radius: 12px;
+            }
+            
+            .nav-card:hover {
+                transform: translateY(-4px) scale(1.01);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-card {
+                min-height: 200px;
+                border-radius: 10px;
+            }
+            
+            .nav-card:hover {
+                transform: translateY(-2px) scale(1.005);
+            }
+        }
+        
+        .nav-card-header {
+            padding: 25px 20px;
+            background: linear-gradient(135deg, #e6a336, #d1891c);
+            text-align: center;
+            flex-shrink: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-card-header {
+                padding: 18px 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-card-header {
+                padding: 14px 12px;
+            }
+        }
+        
+        .nav-icon {
+            font-size: 3.5rem;
+            margin-bottom: 12px;
+            display: block;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-icon {
+                font-size: 2.8rem;
+                margin-bottom: 8px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-icon {
+                font-size: 2.2rem;
+                margin-bottom: 6px;
+            }
+        }
+        
+        .nav-title {
+            font-family: 'Cinzel', serif;
+            font-size: 1.8rem;
+            color: #333;
+            font-weight: 700;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-title {
+                font-size: 1.4rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-title {
+                font-size: 1.2rem;
+            }
+        }
+        
+        .nav-card-body {
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-card-body {
+                padding: 15px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-card-body {
+                padding: 12px 10px;
+            }
+        }
+        
+        .nav-description {
+            font-size: 1.05rem;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-description {
+                font-size: 0.95rem;
+                line-height: 1.5;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .nav-description {
+                font-size: 0.85rem;
+                line-height: 1.4;
+            }
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 25px 20px;
+            color: #f5ebd8;
+            font-size: 1rem;
+            border-top: 2px solid #d4a574;
+            margin-top: auto;
+            background: rgba(30, 20, 10, 0.8);
+            border-radius: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .footer {
+                padding: 18px 15px;
+                font-size: 0.9rem;
+                border-radius: 12px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .footer {
+                padding: 14px 12px;
+                font-size: 0.8rem;
+                border-radius: 10px;
+            }
+        }
+        
+        .footer-notice {
+            margin: 12px 0;
+            padding: 8px;
+            color: #f5ebd8;
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        @media (max-width: 480px) {
+            .footer-notice {
+                font-size: 0.75rem;
+                margin: 8px 0;
+            }
+        }
+        
+        .author-links {
+            margin-top: 12px;
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .author-links {
+                flex-direction: column;
+                gap: 10px;
+                align-items: center;
+            }
+        }
+        
+        .author-link {
+            color: #e6a336;
+            text-decoration: none;
+            padding: 6px 14px;
+            border: 1px solid #d4a574;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+            background: rgba(139, 69, 19, 0.2);
+            font-size: 0.95rem;
+        }
+        
+        .author-link:hover {
+            background: rgba(230, 163, 54, 0.2);
+            color: #ffcc66;
+            transform: translateY(-2px);
+        }
+        
+        @media (max-width: 480px) {
+            .author-link {
+                font-size: 0.8rem;
+                padding: 5px 12px;
+                border-radius: 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Единая база исторической реконструкции</h1>
+            <p class="subtitle">Перед вами — база данных по исторической реконструкции, охватывающая все исторические эпохи, а также такие направления, как ИСБ, HEMA и СМБ. На данный момент база сосредоточена на России и соседних странах. Она активно пополняется, поскольку ещё не все существующие клубы, мероприятия и магазины этого региона внесены в неё. В будущем планируется максимально расширить географию проекта.</p>
+        </header>
+        
+        <div class="nav-menu">
+            <a href="clubs.html" class="nav-card">
+                <div class="nav-card-header">
+                    <span class="nav-icon">🏛️</span>
+                    <h2 class="nav-title">Клубы</h2>
+                </div>
+                <div class="nav-card-body">
+                    <p class="nav-description">Каталог клубов исторической реконструкции. Поиск по городам, странам, историческим эпохам и направлениям.</p>
+                </div>
+            </a>
+            
+            <a href="festivals.html" class="nav-card">
+                <div class="nav-card-header">
+                    <span class="nav-icon">🎪</span>
+                    <h2 class="nav-title">Мероприятия</h2>
+                </div>
+                <div class="nav-card-body">
+                    <p class="nav-description">Календарь фестивалей, турниров и иных мероприятий исторической реконструкции. Места проведения и подробная информация о мероприятиях.</p>
+                </div>
+            </a>
+            
+            <a href="shops.html" class="nav-card">
+                <div class="nav-card-header">
+                    <span class="nav-icon">🛒</span>
+                    <h2 class="nav-title">Магазины</h2>
+                </div>
+                <div class="nav-card-body">
+                    <p class="nav-description">Каталог магазинов, мастерских и производителей снаряжения для исторической реконструкции.</p>
+                </div>
+            </a>
+        </div>
+        
+        <div class="footer">
+            <p>Данные обновлены: <span id="currentDate"></span></p>
+            <div class="footer-notice">
+                ⚠️ Данный сайт является неофициальным общественным проектом и не связан с государственными информационными системами.
+            </div>
+            <div class="author-links">
+                <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="author-link">Автор: Всеволод Забалуев</a>
+                <a href="https://vk.com/sarkelvrn" target="_blank" class="author-link">Клуб: КВИРиР «Саркел»</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Кнопка "Предложить" -->
+    <a href="feedback.html" class="feedback-button">
+        <span>📝</span>
+        <span>Предложить</span>
+    </a>
+
+    <script>
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('ru-RU', options);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = formattedDate;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setCurrentDate();
+        });
+    </script>
+</body>
+</html>

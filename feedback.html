@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Предложка | ЕБИР</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22 fill=%22%238b4513%22>📜</text></svg>">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            background-image: url('fon.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            min-height: 100vh;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 20, 10, 0.7);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            padding-top: 70px;
+        }
+        
+        .feedback-card {
+            background: linear-gradient(to bottom, #fef9f3 0%, #f5ebd8 100%);
+            border-radius: 20px;
+            padding: 40px;
+            border: 3px solid #d4a574;
+            box-shadow: 0 10px 40px rgba(139, 69, 19, 0.4);
+        }
+        
+        .feedback-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #d4a574;
+            padding-bottom: 20px;
+        }
+        
+        .feedback-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.2rem;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-icon {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .feedback-subtitle {
+            color: #555;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+        
+        .form-group {
+            margin-bottom: 22px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #8b4513;
+            font-size: 1.05rem;
+        }
+        
+        .form-label .required {
+            color: #cc3333;
+            margin-left: 2px;
+        }
+        
+        .form-input,
+        .form-textarea,
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            background: rgba(255, 248, 240, 0.9);
+            font-size: 1rem;
+            color: #333;
+            transition: all 0.3s;
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #e6a336;
+            box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.3);
+            background: rgba(255, 252, 248, 0.95);
+        }
+        
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+        
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b4513' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 15px center;
+            background-size: 20px;
+            padding-right: 45px;
+        }
+        
+        .form-hint {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.85rem;
+            color: #888;
+            font-style: italic;
+        }
+        
+        .conditional-fields {
+            display: none;
+            padding: 15px;
+            background: rgba(255, 248, 240, 0.5);
+            border-radius: 10px;
+            border: 1px dashed #d4a574;
+            margin-top: 5px;
+        }
+        
+        .conditional-fields.active {
+            display: block;
+        }
+        
+        .form-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        
+        .submit-button {
+            flex: 1;
+            padding: 15px;
+            background: linear-gradient(135deg, #e6a336, #d1891c);
+            color: #333;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            border: 2px solid #c17e1a;
+        }
+        
+        .submit-button:hover {
+            background: linear-gradient(135deg, #d1891c, #b8731a);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(139, 69, 19, 0.3);
+        }
+        
+        .submit-button:active {
+            transform: translateY(0);
+        }
+        
+        .cancel-button {
+            flex: 1;
+            padding: 15px;
+            background: rgba(139, 69, 19, 0.1);
+            color: #8b4513;
+            border: 2px solid #d4a574;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        
+        .cancel-button:hover {
+            background: rgba(139, 69, 19, 0.2);
+        }
+        
+        .form-note {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 228, 196, 0.3);
+            border-radius: 10px;
+            border: 1px solid #d4a574;
+            text-align: center;
+        }
+        
+        .form-note p {
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 10px;
+        }
+        
+        .contact-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .contact-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #e6a336, #d1891c);
+            color: #333;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            border: 1px solid #c17e1a;
+            transition: all 0.3s;
+        }
+        
+        .contact-link:hover {
+            background: linear-gradient(135deg, #d1891c, #b8731a);
+            transform: translateY(-2px);
+        }
+        
+        .contact-link.email {
+            background: linear-gradient(135deg, #36aee6, #1c6dd1);
+            border-color: #1a5cc1;
+            color: #fff;
+        }
+        
+        .contact-link.email:hover {
+            background: linear-gradient(135deg, #1c6dd1, #1a5cb8);
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #f5ebd8;
+            font-size: 1rem;
+            border-top: 2px solid #d4a574;
+            margin-top: 40px;
+            background: rgba(30, 20, 10, 0.8);
+            border-radius: 15px;
+        }
+        
+        .footer-notice {
+            margin: 15px 0;
+            padding: 10px;
+            color: #f5ebd8;
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .author-links {
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .author-link {
+            color: #e6a336;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #d4a574;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-weight: 600;
+            background: rgba(139, 69, 19, 0.2);
+        }
+        
+        .author-link:hover {
+            background: rgba(230, 163, 54, 0.2);
+            color: #ffcc66;
+            transform: translateY(-2px);
+        }
+        
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: linear-gradient(135deg, #e6a336, #d1891c);
+            color: #333;
+            padding: 15px 25px;
+            border-radius: 10px;
+            border: 2px solid #c17e1a;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            z-index: 1002;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
+            max-width: 400px;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .feedback-card {
+                padding: 25px;
+            }
+            
+            .feedback-title {
+                font-size: 1.8rem;
+            }
+            
+            .form-buttons {
+                flex-direction: column;
+            }
+            
+            .contact-links {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .contact-link {
+                justify-content: center;
+            }
+            
+            .author-links {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .container {
+                padding-top: 100px;
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+                font-size: 0.9rem;
+                padding: 12px 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Навигационный модуль загружается через JS -->
+        
+        <div class="feedback-card">
+            <div class="feedback-header">
+                <span class="feedback-icon">📝</span>
+                <h1 class="feedback-title">Предложка</h1>
+                <p class="feedback-subtitle">
+                    Заполните форму, чтобы предложить добавить или отредактировать информацию
+                    о клубе, мероприятии или магазине в нашей базе данных, либо просто оставьте обратную связь.
+                </p>
+            </div>
+            
+            <form id="feedbackForm">
+                <!-- Тип предложения -->
+                <div class="form-group">
+                    <label class="form-label" for="suggestType">
+                        Что вы хотите предложить? <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="suggestType" name="suggestType" required>
+                        <option value="">Выберите тип</option>
+                        <option value="club">🏛 Клуб</option>
+                        <option value="festival">🎪 Мероприятие</option>
+                        <option value="shop">🛒 Магазин</option>
+                        <option value="feedback">💬 Обратная связь</option>
+                    </select>
+                    <span class="form-hint">Выберите категорию, к которой относится ваше предложение</span>
+                </div>
+                
+                <!-- Базовые поля -->
+                <div class="form-group">
+                    <label class="form-label" for="name">
+                        Название <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="name" name="name" placeholder="Введите название" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="city">
+                        Город
+                    </label>
+                    <input type="text" class="form-input" id="city" name="city" placeholder="Введите город">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="country">
+                        Страна
+                    </label>
+                    <select class="form-select" id="country" name="country">
+                        <option value="">Выберите страну</option>
+                        <option value="Россия">Россия</option>
+                        <option value="Беларусь">Беларусь</option>
+                        <option value="Казахстан">Казахстан</option>
+                        <option value="Узбекистан">Узбекистан</option>
+                        <option value="другая">Другая страна</option>
+                    </select>
+                </div>
+                
+                <!-- Скрытые поля для клубов -->
+                <div id="clubFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="eras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="eras" name="eras" placeholder="Например: IX в., X в., Средневековье">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                </div>
+                
+                <!-- Скрытые поля для мероприятий -->
+                <div id="festivalFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="eventType">
+                            Тип мероприятия <span class="required">*</span>
+                        </label>
+                        <select class="form-select" id="eventType" name="eventType">
+                            <option value="">Выберите тип мероприятия</option>
+                            <option value="фестиваль">🎪 Фестиваль</option>
+                            <option value="турнир">⚔️ Турнир</option>
+                            <option value="иное">📌 Иное</option>
+                        </select>
+                        <span class="form-hint">Укажите, к какому типу относится мероприятие</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="festivalEras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="festivalEras" name="festivalEras" placeholder="Например: IX в., X в., Средневековье">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="website">
+                            Сайт мероприятия
+                        </label>
+                        <input type="url" class="form-input" id="website" name="website" placeholder="https://festival.ru">
+                    </div>
+                </div>
+                
+                <!-- Скрытые поля для магазинов -->
+                <div id="shopFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="specialization">
+                            Специализация
+                        </label>
+                        <input type="text" class="form-input" id="specialization" name="specialization" placeholder="Например: доспехи, оружие, текстиль">
+                        <span class="form-hint">Укажите специализацию через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="shopEras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="shopEras" name="shopEras" placeholder="Например: Средневековье, XIII в.">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="shopWebsite">
+                            Сайт магазина
+                        </label>
+                        <input type="url" class="form-input" id="shopWebsite" name="shopWebsite" placeholder="https://shop.ru">
+                    </div>
+                </div>
+                
+                <!-- Общие поля -->
+                <div class="form-group">
+                    <label class="form-label" for="vk">
+                        Ссылка VK
+                    </label>
+                    <input type="url" class="form-input" id="vk" name="vk" placeholder="https://vk.com/...">
+                    <span class="form-hint">Ссылка на страницу VK (обязательно для клуба, мероприятия или магазина)</span>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="description">
+                        Сообщение <span class="required">*</span>
+                    </label>
+                    <textarea class="form-textarea" id="description" name="description" placeholder="Расскажите подробнее о том, что вы хотите предложить, или напишите свои пожелания/замечания..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="userName">
+                        Ваше имя (по желанию)
+                    </label>
+                    <input type="text" class="form-input" id="userName" name="userName" placeholder="Как к вам обращаться">
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="submit-button">📋 Скопировать сообщение</button>
+                    <a href="index.html" class="cancel-button">Отмена</a>
+                </div>
+                
+                <div class="form-note">
+                    <p>Сообщение будет скопировано в буфер обмена. Отправьте его одним из способов:</p>
+                    <div class="contact-links">
+                        <a href="mailto:vsevolodzabaluev@yandex.ru?subject=Предложение в ЕБИР" class="contact-link email">
+                            <span>📧</span>
+                            <span>Email: vsevolodzabaluev@yandex.ru</span>
+                        </a>
+                        <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="contact-link">
+                            <span>👤</span>
+                            <span>ВК автора</span>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>Данные обновлены: <span id="currentDate"></span></p>
+            <div class="footer-notice">
+                ⚠️ Данный сайт является неофициальным общественным проектом и не связан с государственными информационными системами.
+            </div>
+            <div class="author-links">
+                <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="author-link">Автор: Всеволод Забалуев</a>
+                <a href="https://vk.com/sarkelvrn" target="_blank" class="author-link">Клуб: КВИРиР «Саркел»</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // === Утилиты ===
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('ru-RU', options);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = formattedDate;
+        }
+        
+        function showNotification(text, isError = false) {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = text;
+            if (isError) {
+                notification.style.background = 'linear-gradient(135deg, #e63636, #cc1c1c)';
+                notification.style.borderColor = '#aa1a1a';
+                notification.style.color = '#fff';
+            }
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 6000);
+        }
+        
+        // === Показ/скрытие полей в зависимости от типа ===
+        function toggleConditionalFields() {
+            const type = document.getElementById('suggestType').value;
+            const clubFields = document.getElementById('clubFields');
+            const festivalFields = document.getElementById('festivalFields');
+            const shopFields = document.getElementById('shopFields');
+            
+            // Скрыть все
+            clubFields.classList.remove('active');
+            festivalFields.classList.remove('active');
+            shopFields.classList.remove('active');
+            
+            // Показать нужные
+            if (type === 'club') clubFields.classList.add('active');
+            else if (type === 'festival') festivalFields.classList.add('active');
+            else if (type === 'shop') shopFields.classList.add('active');
+            // Для 'feedback' ничего не показываем
+        }
+        
+        // === Форматирование сообщения ===
+        function formatMessage(data) {
+            const typeLabels = {
+                'club': '🏛 Клуб исторической реконструкции',
+                'festival': '🎪 Мероприятие',
+                'shop': '🛒 Магазин или мастерская',
+                'feedback': '💬 Обратная связь'
+            };
+            
+            let message = `📋 Предложение в ЕБИР (Единая база исторической реконструкции)\n\n`;
+            message += `📌 Тип: ${typeLabels[data.type] || data.type}\n`;
+            
+            if (data.type !== 'feedback') {
+                message += `🏷 Название: ${data.name}\n`;
+            }
+            
+            if (data.city) {
+                message += `📍 Город: ${data.city}\n`;
+            }
+            
+            if (data.country) {
+                message += `🌍 Страна: ${data.country}\n`;
+            }
+            
+            // Дополнительные поля в зависимости от типа
+            if (data.type === 'club' && data.eras) {
+                message += `📅 Исторические эпохи: ${data.eras}\n`;
+            }
+            
+            if (data.type === 'festival') {
+                if (data.eventType) {
+                    const eventTypeLabels = {
+                        'фестиваль': '🎪 Фестиваль',
+                        'турнир': '⚔️ Турнир',
+                        'иное': '📌 Иное'
+                    };
+                    message += `📌 Тип мероприятия: ${eventTypeLabels[data.eventType] || data.eventType}\n`;
+                }
+                if (data.festivalEras) message += `📅 Исторические эпохи: ${data.festivalEras}\n`;
+                if (data.website && data.website !== 'Не указано') message += `🌐 Сайт: ${data.website}\n`;
+            }
+            
+            if (data.type === 'shop') {
+                if (data.specialization && data.specialization !== 'Не указано') message += `🛠 Специализация: ${data.specialization}\n`;
+                if (data.shopEras && data.shopEras !== 'Не указано') message += `📅 Исторические эпохи: ${data.shopEras}\n`;
+                if (data.shopWebsite && data.shopWebsite !== 'Не указано') message += `🌐 Сайт: ${data.shopWebsite}\n`;
+            }
+            
+            if (data.vk && data.type !== 'feedback') {
+                message += `🔗 VK: ${data.vk}\n`;
+            }
+            
+            message += `\n📝 Сообщение:\n${data.description}\n\n`;
+            
+            if (data.userName && data.userName !== 'Аноним') {
+                message += `👤 Отправитель: ${data.userName}\n`;
+            }
+            
+            message += `⏰ Время отправки: ${data.timestamp}\n`;
+            message += `🔗 Страница: ${window.location.href}\n\n`;
+            message += `────────────────────────────────\n`;
+            message += `Отправьте это сообщение одним из способов:\n`;
+            message += `📧 Email: vsevolodzabaluev@yandex.ru\n`;
+            message += `👤 ВК автора: https://vk.com/vsevolod_anadyrsky`;
+            
+            return message;
+        }
+        
+        // === Обработка формы ===
+        function initForm() {
+            const form = document.getElementById('feedbackForm');
+            
+            // Переключение полей при изменении типа
+            document.getElementById('suggestType').addEventListener('change', toggleConditionalFields);
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Сбор данных
+                const type = document.getElementById('suggestType').value;
+                if (!type) {
+                    showNotification('Пожалуйста, выберите тип предложения', true);
+                    return;
+                }
+                
+                const formData = {
+                    type: type,
+                    name: document.getElementById('name').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    country: document.getElementById('country').value,
+                    vk: document.getElementById('vk').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    userName: document.getElementById('userName').value.trim() || 'Аноним',
+                    timestamp: new Date().toLocaleString('ru-RU', { 
+                        day: 'numeric', month: 'long', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    })
+                };
+                
+                // Проверка обязательных полей
+                if (!formData.description) {
+                    showNotification('Пожалуйста, заполните поле "Сообщение" (отмечено *)', true);
+                    return;
+                }
+                
+                // Для клуба, мероприятия, магазина проверяем обязательные поля
+                if (type === 'club' || type === 'festival' || type === 'shop') {
+                    if (!formData.name) {
+                        showNotification('Пожалуйста, заполните поле "Название" (отмечено *)', true);
+                        return;
+                    }
+                    if (!formData.vk) {
+                        showNotification('Пожалуйста, заполните поле "Ссылка VK" (отмечено *)', true);
+                        return;
+                    }
+                }
+                
+                // Дополнительные поля для клубов
+                if (type === 'club') {
+                    formData.eras = document.getElementById('eras').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для мероприятий
+                if (type === 'festival') {
+                    formData.eventType = document.getElementById('eventType').value;
+                    if (!formData.eventType) {
+                        showNotification('Пожалуйста, выберите тип мероприятия', true);
+                        return;
+                    }
+                    formData.festivalEras = document.getElementById('festivalEras').value.trim() || 'Не указано';
+                    formData.website = document.getElementById('website').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для магазинов
+                if (type === 'shop') {
+                    formData.specialization = document.getElementById('specialization').value.trim() || 'Не указано';
+                    formData.shopEras = document.getElementById('shopEras').value.trim() || 'Не указано';
+                    formData.shopWebsite = document.getElementById('shopWebsite').value.trim() || 'Не указано';
+                }
+                
+                const message = formatMessage(formData);
+                
+                // Копирование в буфер обмена
+                navigator.clipboard.writeText(message)
+                    .then(() => {
+                        showNotification('✅ Сообщение скопировано в буфер обмена! Отправьте его на email или в ВК автора.');
+                    })
+                    .catch(() => {
+                        showNotification('⚠️ Не удалось скопировать автоматически. Скопируйте текст вручную из всплывающего окна.', true);
+                        alert('Скопируйте этот текст и отправьте на email или в ВК автора:\n\n' + message);
+                    });
+                
+                // Сброс формы после отправки (опционально)
+                // form.reset();
+                // toggleConditionalFields();
+            });
+        }
+        
+        // === Загрузка навигационного модуля ===
+        function loadNavigationModule() {
+            fetch('navigation-module.html')
+                .then(response => {
+                    if (!response.ok) throw new Error('Не удалось загрузить модуль навигации');
+                    return response.text();
+                })
+                .then(html => {
+                    document.body.insertAdjacentHTML('afterbegin', html);
+                })
+                .catch(() => {
+                    // Резервная навигация
+                    const backupNav = document.createElement('nav');
+                    backupNav.style.cssText = `
+                        position: fixed;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        background: rgba(30, 20, 10, 0.95);
+                        border-bottom: 2px solid #d4a574;
+                        z-index: 999;
+                        padding: 10px 20px;
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        flex-wrap: wrap;
+                        gap: 10px;
+                    `;
+                    backupNav.innerHTML = `
+                        <a href="index.html" style="color: #e6a336; text-decoration: none; font-weight: bold; font-size: 1.1rem;">
+                            🏠 ЕБИР
+                        </a>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <a href="index.html" style="color: #f5ebd8; text-decoration: none; padding: 5px 12px; border: 1px solid #d4a574; border-radius: 5px;">Главная</a>
+                            <a href="clubs.html" style="color: #f5ebd8; text-decoration: none; padding: 5px 12px; border: 1px solid #d4a574; border-radius: 5px;">Клубы</a>
+                            <a href="festivals.html" style="color: #f5ebd8; text-decoration: none; padding: 5px 12px; border: 1px solid #d4a574; border-radius: 5px;">Мероприятия</a>
+                            <a href="shops.html" style="color: #f5ebd8; text-decoration: none; padding: 5px 12px; border: 1px solid #d4a574; border-radius: 5px;">Магазины</a>
+                            <a href="feedback.html" style="color: #333; text-decoration: none; padding: 5px 12px; background: linear-gradient(135deg, #e6a336, #d1891c); border-radius: 5px; font-weight: bold;">Предложка</a>
+                        </div>
+                    `;
+                    document.body.insertAdjacentElement('afterbegin', backupNav);
+                    const container = document.querySelector('.container');
+                    if (container) container.style.paddingTop = '80px';
+                });
+        }
+        
+        // === Инициализация ===
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentDate();
+            loadNavigationModule();
+            initForm();
+        });
+    </script>
+</body>
+</html>
