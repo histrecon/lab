@@ -7,7 +7,7 @@
         </a>
         
         <!-- КНОПКА БУРГЕРА -->
-        <button class="burger-btn" id="burgerBtn" aria-label="Открыть меню" aria-expanded="false">
+        <button class="burger-btn" id="burgerBtn" aria-label="Открыть меню">
             <span class="burger-line"></span>
             <span class="burger-line"></span>
             <span class="burger-line"></span>
@@ -17,7 +17,7 @@
         <div class="nav-menu" id="navMenu">
             <a href="index.html" class="nav-menu-item">
                 <span>📋</span>
-                <span>Главная ЕБИР</span>
+                <span>Главная</span>
             </a>
             <a href="clubs.html" class="nav-menu-item">
                 <span>🏛️</span>
@@ -43,10 +43,13 @@
     </div>
 </nav>
 
-<!-- ЧЕКБОКС (СКРЫТ) -->
+<!-- ОВЕРЛЕЙ (затемнение фона) -->
+<div class="nav-overlay" id="navOverlay"></div>
+
+<!-- ЧЕКБОКС ДОНАТА -->
 <input type="checkbox" id="donateToggle" style="display:none;">
 
-<!-- МОДАЛЬНОЕ ОКНО -->
+<!-- МОДАЛЬНОЕ ОКНО ДОНАТА -->
 <div class="donate-modal">
     <div class="donate-modal-content">
         <label for="donateToggle" class="donate-close">&times;</label>
@@ -65,7 +68,7 @@
 
 <style>
     /* ============================================================
-       НАВИГАЦИЯ — ДЕСКТОП
+       НАВИГАЦИЯ
        ============================================================ */
 
     .navigation-module {
@@ -81,7 +84,6 @@
         min-height: 50px;
         display: flex;
         align-items: center;
-        transition: background 0.3s ease;
     }
 
     .nav-container {
@@ -120,7 +122,7 @@
     }
 
     /* ============================================================
-       БУРГЕР-КНОПКА
+       БУРГЕР-КНОПКА — по умолчанию скрыта на десктопе
        ============================================================ */
 
     .burger-btn {
@@ -171,7 +173,7 @@
     }
 
     /* ============================================================
-       МЕНЮ — ДЕСКТОП
+       МЕНЮ — по умолчанию видно на десктопе
        ============================================================ */
 
     .nav-menu {
@@ -270,11 +272,13 @@
         z-index: 8;
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
     }
 
     .nav-overlay.active {
         display: block;
         opacity: 1;
+        pointer-events: auto;
     }
 
     /* ============================================================
@@ -377,38 +381,6 @@
     }
 
     /* ============================================================
-       АДАПТИВНОСТЬ
-       ============================================================ */
-
-    @media (max-width: 992px) {
-        .navigation-module {
-            min-height: 46px;
-            padding: 4px 12px;
-        }
-        .nav-logo {
-            font-size: 0.9rem;
-            height: 28px;
-            padding: 3px 8px;
-        }
-        .nav-menu-item {
-            font-size: 0.78rem;
-            padding: 3px 8px;
-            height: 28px;
-        }
-        .donate-btn {
-            font-size: 0.78rem;
-            padding: 3px 8px;
-            height: 28px;
-        }
-        .nav-container {
-            gap: 6px;
-        }
-        .nav-menu {
-            gap: 4px;
-        }
-    }
-
-    /* ============================================================
        ТЕЛЕФОНЫ (до 768px) — БУРГЕР ВКЛЮЧАЕТСЯ
        ============================================================ */
 
@@ -434,7 +406,7 @@
             display: flex !important;
         }
 
-        /* === МЕНЮ СКРЫВАЕТСЯ === */
+        /* === МЕНЮ СКРЫВАЕТСЯ (выезжает справа) === */
         .nav-menu {
             position: fixed;
             top: 0;
@@ -535,11 +507,6 @@
             transform: none;
         }
 
-        /* Оверлей для затемнения фона */
-        .nav-overlay.active {
-            display: block;
-        }
-
         .donate-modal-content {
             padding: 20px;
         }
@@ -632,6 +599,8 @@
     (function() {
         'use strict';
 
+        console.log('🔧 Инициализация навигации...');
+
         // === ПОДСВЕТКА АКТИВНОЙ СТРАНИЦЫ ===
         var currentPage = window.location.pathname.split('/').pop() || 'index.html';
         if (currentPage.includes('?')) currentPage = currentPage.split('?')[0];
@@ -648,8 +617,8 @@
         // === БУРГЕР-МЕНЮ ===
         var burgerBtn = document.getElementById('burgerBtn');
         var navMenu = document.getElementById('navMenu');
+        var overlay = document.getElementById('navOverlay');
 
-        // Проверяем, что элементы существуют
         if (!burgerBtn) {
             console.error('❌ Кнопка бургера не найдена!');
             return;
@@ -659,11 +628,8 @@
             return;
         }
 
-        // Создаём оверлей
-        var overlay = document.createElement('div');
-        overlay.className = 'nav-overlay';
-        overlay.id = 'navOverlay';
-        document.body.appendChild(overlay);
+        console.log('✅ Бургер найден:', burgerBtn);
+        console.log('✅ Меню найдено:', navMenu);
 
         var isOpen = false;
 
@@ -671,10 +637,12 @@
             isOpen = !isOpen;
             navMenu.classList.toggle('open', isOpen);
             burgerBtn.classList.toggle('active', isOpen);
-            burgerBtn.setAttribute('aria-expanded', isOpen);
-            overlay.classList.toggle('active', isOpen);
+            if (overlay) {
+                overlay.classList.toggle('active', isOpen);
+            }
             document.body.style.overflow = isOpen ? 'hidden' : '';
-            console.log('🍔 Меню ' + (isOpen ? 'открыто' : 'закрыто'));
+            console.log('🍔 Меню ' + (isOpen ? 'ОТКРЫТО' : 'ЗАКРЫТО'));
+            console.log('📋 Классы меню:', navMenu.className);
         }
 
         function closeMenu() {
@@ -682,31 +650,36 @@
                 isOpen = false;
                 navMenu.classList.remove('open');
                 burgerBtn.classList.remove('active');
-                burgerBtn.setAttribute('aria-expanded', 'false');
-                overlay.classList.remove('active');
+                if (overlay) {
+                    overlay.classList.remove('active');
+                }
                 document.body.style.overflow = '';
                 console.log('🍔 Меню закрыто');
             }
         }
 
-        // Клик по бургеру
+        // === НАВЕШИВАЕМ СОБЫТИЯ ===
+
+        // 1. Клик по бургеру
         burgerBtn.addEventListener('click', function(e) {
             e.stopPropagation();
-            console.log('🍔 Кнопка бургера нажата');
+            console.log('🍔 Кнопка бургера НАЖАТА!');
             toggleMenu();
         });
 
-        // Клик по оверлею
-        overlay.addEventListener('click', function() {
-            console.log('🍔 Клик по оверлею');
-            closeMenu();
-        });
+        // 2. Клик по оверлею
+        if (overlay) {
+            overlay.addEventListener('click', function() {
+                console.log('🍔 Клик по оверлею');
+                closeMenu();
+            });
+        }
 
-        // Клик по пунктам меню
+        // 3. Клик по пунктам меню — закрываем
         var menuItems = navMenu.querySelectorAll('.nav-menu-item, .donate-btn');
         menuItems.forEach(function(item) {
             item.addEventListener('click', function() {
-                console.log('🍔 Клик по пункту меню');
+                console.log('🍔 Клик по пункту меню:', this.textContent.trim());
                 if (this.tagName === 'A') {
                     setTimeout(closeMenu, 150);
                 } else {
@@ -715,7 +688,7 @@
             });
         });
 
-        // Закрытие по ESC
+        // 4. Закрытие по ESC
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 closeMenu();
@@ -723,7 +696,7 @@
             }
         });
 
-        // Закрытие при изменении размера окна
+        // 5. Закрытие при изменении размера окна
         var resizeTimeout;
         window.addEventListener('resize', function() {
             clearTimeout(resizeTimeout);
@@ -733,6 +706,15 @@
                 }
             }, 200);
         });
+
+        // 6. Для проверки — принудительно покажем меню через 2 секунды (для теста)
+        // Раскомментируйте для отладки:
+        // setTimeout(function() {
+        //     console.log('🔧 Тестовое открытие меню через 2 секунды');
+        //     if (!isOpen) toggleMenu();
+        // }, 2000);
+
+        console.log('✅ Бургер-меню готово! Нажмите на ☰');
 
         // === МОДАЛКА ДОНАТА ===
         var modal = document.querySelector('.donate-modal');
@@ -744,7 +726,7 @@
             });
         }
 
-        console.log('✅ Бургер-меню инициализировано');
+        console.log('🎯 Навигация инициализирована полностью');
 
     })();
 </script>
