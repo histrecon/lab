@@ -6,14 +6,7 @@
             <span>РеконХаб</span>
         </a>
         
-        <!-- КНОПКА БУРГЕРА -->
-        <button class="burger-btn" id="burgerBtn" aria-label="Открыть меню">
-            <span class="burger-line"></span>
-            <span class="burger-line"></span>
-            <span class="burger-line"></span>
-        </button>
-        
-        <!-- МЕНЮ -->
+        <!-- МЕНЮ — ВСЕ КНОПКИ ВСЕГДА ВИДНЫ -->
         <div class="nav-menu" id="navMenu">
             <a href="index.html" class="nav-menu-item">
                 <span>📋</span>
@@ -42,9 +35,6 @@
         </div>
     </div>
 </nav>
-
-<!-- ОВЕРЛЕЙ (затемнение фона) -->
-<div class="nav-overlay" id="navOverlay"></div>
 
 <!-- ЧЕКБОКС ДОНАТА -->
 <input type="checkbox" id="donateToggle" style="display:none;">
@@ -122,58 +112,7 @@
     }
 
     /* ============================================================
-       БУРГЕР-КНОПКА — по умолчанию скрыта на десктопе
-       ============================================================ */
-
-    .burger-btn {
-        display: none;
-        flex-direction: column;
-        justify-content: space-between;
-        width: 28px;
-        height: 20px;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        z-index: 10;
-        flex-shrink: 0;
-    }
-
-    .burger-btn:hover {
-        opacity: 0.8;
-    }
-
-    .burger-btn:focus {
-        outline: 2px solid #e6a336;
-        outline-offset: 4px;
-    }
-
-    .burger-line {
-        display: block;
-        width: 100%;
-        height: 2.5px;
-        background: #f5ebd8;
-        border-radius: 2px;
-        transition: all 0.3s ease;
-        transform-origin: center;
-    }
-
-    /* Анимация бургера → крестик */
-    .burger-btn.active .burger-line:nth-child(1) {
-        transform: translateY(8.5px) rotate(45deg);
-    }
-
-    .burger-btn.active .burger-line:nth-child(2) {
-        opacity: 0;
-        transform: scaleX(0);
-    }
-
-    .burger-btn.active .burger-line:nth-child(3) {
-        transform: translateY(-8.5px) rotate(-45deg);
-    }
-
-    /* ============================================================
-       МЕНЮ — по умолчанию видно на десктопе
+       МЕНЮ — ВСЕГДА ВИДНО НА ВСЕХ УСТРОЙСТВАХ
        ============================================================ */
 
     .nav-menu {
@@ -255,30 +194,6 @@
         color: #ff4444;
         border-color: #ff4444;
         transform: translateY(-1px);
-    }
-
-    /* ============================================================
-       ОВЕРЛЕЙ
-       ============================================================ */
-
-    .nav-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 8;
-        opacity: 0;
-        transition: opacity 0.3s ease;
-        pointer-events: none;
-    }
-
-    .nav-overlay.active {
-        display: block;
-        opacity: 1;
-        pointer-events: auto;
     }
 
     /* ============================================================
@@ -381,8 +296,43 @@
     }
 
     /* ============================================================
-       ТЕЛЕФОНЫ (до 768px) — БУРГЕР ВКЛЮЧАЕТСЯ
+       АДАПТИВНОСТЬ — ВСЕ КНОПКИ ВИДНЫ НА ВСЕХ УСТРОЙСТВАХ
        ============================================================ */
+
+    @media (max-width: 992px) {
+        .navigation-module {
+            min-height: 46px;
+            padding: 4px 12px;
+        }
+        .nav-logo {
+            font-size: 0.9rem;
+            height: 28px;
+            padding: 3px 8px;
+        }
+        .nav-menu-item {
+            font-size: 0.78rem;
+            padding: 3px 8px;
+            height: 28px;
+        }
+        .donate-btn {
+            font-size: 0.78rem;
+            padding: 3px 8px;
+            height: 28px;
+        }
+        .nav-container {
+            gap: 6px;
+        }
+        .nav-menu {
+            gap: 4px;
+        }
+        /* Убираем эмодзи на маленьких экранах, чтобы экономить место */
+        .nav-menu-item span:first-child {
+            font-size: 0.7rem;
+        }
+        .donate-btn span:first-child {
+            font-size: 0.7rem;
+        }
+    }
 
     @media (max-width: 768px) {
         .navigation-module {
@@ -392,119 +342,56 @@
 
         .nav-container {
             flex-wrap: nowrap;
-            gap: 6px;
+            gap: 4px;
         }
 
         .nav-logo {
-            font-size: 0.85rem;
-            height: 28px;
-            padding: 3px 8px;
+            font-size: 0.75rem;
+            height: 24px;
+            padding: 2px 6px;
+            gap: 3px;
+            border-width: 1px;
+        }
+        .nav-logo span:first-child {
+            font-size: 0.8rem;
         }
 
-        /* === БУРГЕР ПОЯВЛЯЕТСЯ === */
-        .burger-btn {
-            display: flex !important;
-        }
-
-        /* === МЕНЮ СКРЫВАЕТСЯ (выезжает справа) === */
         .nav-menu {
-            position: fixed;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 280px;
-            max-width: 80vw;
-            background: rgba(30, 20, 10, 0.98);
-            flex-direction: column;
-            align-items: stretch;
-            padding: 70px 20px 30px;
-            gap: 4px;
-            overflow-y: auto;
-            transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: -5px 0 30px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-            justify-content: flex-start;
-            flex-wrap: nowrap;
-            border-left: 2px solid #d4a574;
-            z-index: 9;
-            display: flex !important;
-        }
-
-        /* === МЕНЮ ОТКРЫТО === */
-        .nav-menu.open {
-            transform: translateX(0);
+            gap: 3px;
         }
 
         .nav-menu-item {
-            font-size: 1rem;
-            padding: 14px 16px;
-            height: auto;
-            border-radius: 8px;
-            border: 1px solid transparent;
-            justify-content: flex-start;
-            width: 100%;
-            text-align: left;
-            background: rgba(255, 255, 255, 0.03);
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            height: 24px;
+            gap: 3px;
+            border-radius: 4px;
         }
-
         .nav-menu-item span:first-child {
-            font-size: 1.2rem;
-            min-width: 30px;
+            font-size: 0.6rem;
         }
-
         .nav-menu-item span:last-child {
-            font-size: 1rem;
-        }
-
-        .nav-menu-item:hover {
-            background: rgba(230, 163, 54, 0.15);
-            border-color: #d4a574;
-            transform: none;
-        }
-
-        .nav-menu-item.active {
-            background: linear-gradient(135deg, #e6a336, #d1891c);
-            color: #333;
-            border-color: #c17e1a;
+            font-size: 0.6rem;
         }
 
         .feedback-btn {
-            background: linear-gradient(135deg, #e6a336, #d1891c);
-            color: #333;
-            border-color: #c17e1a;
-            font-weight: 700;
-            margin-top: 6px;
-        }
-
-        .feedback-btn:hover {
-            background: linear-gradient(135deg, #d1891c, #b8731a);
-            color: #333;
-            transform: none;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            height: 24px;
         }
 
         .donate-btn {
-            font-size: 1rem;
-            padding: 14px 16px;
-            height: auto;
-            justify-content: flex-start;
-            border-radius: 8px;
-            margin-top: 4px;
-            border: 1px solid #ff6b6b;
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            height: 24px;
+            gap: 3px;
+            border-radius: 4px;
         }
-
         .donate-btn span:first-child {
-            font-size: 1.2rem;
-            min-width: 30px;
+            font-size: 0.6rem;
         }
-
         .donate-btn span:last-child {
-            font-size: 1rem;
-        }
-
-        .donate-btn:hover {
-            transform: none;
+            font-size: 0.6rem;
         }
 
         .donate-modal-content {
@@ -522,176 +409,112 @@
         }
     }
 
-    /* ============================================================
-       МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 480px)
-       ============================================================ */
-
     @media (max-width: 480px) {
         .navigation-module {
             min-height: 48px;
-            padding: 4px 8px;
+            padding: 4px 6px;
         }
 
         .nav-logo {
-            font-size: 0.8rem;
-            height: 26px;
-            padding: 2px 6px;
-            gap: 4px;
+            font-size: 0.65rem;
+            height: 20px;
+            padding: 2px 4px;
+            gap: 2px;
         }
-
         .nav-logo span:first-child {
-            font-size: 0.9rem;
-        }
-
-        .burger-btn {
-            width: 24px;
-            height: 17px;
-        }
-
-        .burger-line {
-            height: 2px;
-        }
-
-        .burger-btn.active .burger-line:nth-child(1) {
-            transform: translateY(7.5px) rotate(45deg);
-        }
-
-        .burger-btn.active .burger-line:nth-child(3) {
-            transform: translateY(-7.5px) rotate(-45deg);
+            font-size: 0.7rem;
         }
 
         .nav-menu {
-            width: 260px;
-            padding: 60px 15px 25px;
+            gap: 2px;
         }
 
         .nav-menu-item {
-            font-size: 0.9rem;
-            padding: 12px 14px;
+            font-size: 0.55rem;
+            padding: 1px 4px;
+            height: 20px;
+            gap: 2px;
+            border-radius: 3px;
+            border-width: 1px;
         }
-
         .nav-menu-item span:first-child {
-            font-size: 1rem;
-            min-width: 28px;
+            font-size: 0.5rem;
+        }
+        .nav-menu-item span:last-child {
+            font-size: 0.5rem;
         }
 
-        .nav-menu-item span:last-child {
-            font-size: 0.9rem;
+        .feedback-btn {
+            font-size: 0.55rem;
+            padding: 1px 4px;
+            height: 20px;
         }
 
         .donate-btn {
-            font-size: 0.9rem;
-            padding: 12px 14px;
+            font-size: 0.55rem;
+            padding: 1px 4px;
+            height: 20px;
+            gap: 2px;
+            border-radius: 3px;
+            border-width: 1px;
         }
-
         .donate-btn span:first-child {
-            font-size: 1rem;
-            min-width: 28px;
+            font-size: 0.5rem;
+        }
+        .donate-btn span:last-child {
+            font-size: 0.5rem;
+        }
+    }
+
+    @media (max-width: 360px) {
+        .nav-logo {
+            font-size: 0.55rem;
+            height: 18px;
+            padding: 1px 3px;
+        }
+        .nav-logo span:first-child {
+            font-size: 0.6rem;
         }
 
+        .nav-menu-item {
+            font-size: 0.45rem;
+            padding: 1px 3px;
+            height: 18px;
+            gap: 1px;
+        }
+        .nav-menu-item span:first-child {
+            font-size: 0.45rem;
+        }
+        .nav-menu-item span:last-child {
+            font-size: 0.45rem;
+        }
+
+        .feedback-btn {
+            font-size: 0.45rem;
+            padding: 1px 3px;
+            height: 18px;
+        }
+
+        .donate-btn {
+            font-size: 0.45rem;
+            padding: 1px 3px;
+            height: 18px;
+            gap: 1px;
+        }
+        .donate-btn span:first-child {
+            font-size: 0.45rem;
+        }
         .donate-btn span:last-child {
-            font-size: 0.9rem;
+            font-size: 0.45rem;
         }
     }
 </style>
 
 <script>
-    // ============================================================
-    // ИНИЦИАЛИЗАЦИЯ БУРГЕР-МЕНЮ (глобальная функция)
-    // ============================================================
-
-    window.initBurgerMenu = function() {
-        var burgerBtn = document.getElementById('burgerBtn');
-        var navMenu = document.getElementById('navMenu');
-        var overlay = document.getElementById('navOverlay');
-
-        if (!burgerBtn || !navMenu) {
-            console.warn('⚠️ Бургер или меню не найдены');
-            return;
-        }
-
-        console.log('🍔 Инициализация бургер-меню...');
-
-        var isOpen = false;
-
-        function toggleMenu() {
-            isOpen = !isOpen;
-            navMenu.classList.toggle('open', isOpen);
-            burgerBtn.classList.toggle('active', isOpen);
-            if (overlay) {
-                overlay.classList.toggle('active', isOpen);
-            }
-            document.body.style.overflow = isOpen ? 'hidden' : '';
-            console.log('🍔 Меню ' + (isOpen ? 'ОТКРЫТО' : 'ЗАКРЫТО'));
-        }
-
-        function closeMenu() {
-            if (isOpen) {
-                isOpen = false;
-                navMenu.classList.remove('open');
-                burgerBtn.classList.remove('active');
-                if (overlay) {
-                    overlay.classList.remove('active');
-                }
-                document.body.style.overflow = '';
-            }
-        }
-
-        // === НАВЕШИВАЕМ СОБЫТИЯ ===
-
-        // 1. Клик по бургеру
-        burgerBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            toggleMenu();
-        });
-
-        // 2. Клик по оверлею
-        if (overlay) {
-            overlay.addEventListener('click', closeMenu);
-        }
-
-        // 3. Клик по пунктам меню — закрываем
-        var menuItems = navMenu.querySelectorAll('.nav-menu-item, .donate-btn');
-        menuItems.forEach(function(item) {
-            item.addEventListener('click', function() {
-                if (this.tagName === 'A') {
-                    setTimeout(closeMenu, 150);
-                } else {
-                    closeMenu();
-                }
-            });
-        });
-
-        // 4. Закрытие по ESC
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeMenu();
-            }
-        });
-
-        // 5. Закрытие при изменении размера окна
-        var resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(function() {
-                if (window.innerWidth > 768 && isOpen) {
-                    closeMenu();
-                }
-            }, 200);
-        });
-
-        console.log('✅ Бургер-меню готово');
-    };
-
-    // Если DOM уже загружен, инициализируем сразу
-    if (document.readyState === 'complete' || document.readyState === 'interactive') {
-        setTimeout(window.initBurgerMenu, 50);
-    } else {
-        document.addEventListener('DOMContentLoaded', window.initBurgerMenu);
-    }
-
-    // === ПОДСВЕТКА АКТИВНОЙ СТРАНИЦЫ ===
     (function() {
+        'use strict';
+
+        // === ПОДСВЕТКА АКТИВНОЙ СТРАНИЦЫ ===
         var currentPage = window.location.pathname.split('/').pop() || 'index.html';
         if (currentPage.includes('?')) currentPage = currentPage.split('?')[0];
         if (currentPage.includes('#')) currentPage = currentPage.split('#')[0];
@@ -703,10 +526,8 @@
                 navItems[i].classList.add('active');
             }
         }
-    })();
 
-    // === МОДАЛКА ДОНАТА ===
-    (function() {
+        // === МОДАЛКА ДОНАТА ===
         var modal = document.querySelector('.donate-modal');
         if (modal) {
             modal.addEventListener('click', function(e) {
@@ -715,7 +536,14 @@
                 }
             });
         }
-    })();
 
-    console.log('🎯 Навигация инициализирована полностью');
+        // === ЗАКРЫТИЕ ДОНАТА ПО ESC ===
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('donateToggle').checked = false;
+            }
+        });
+
+        console.log('✅ Навигация загружена (все кнопки видны)');
+    })();
 </script>
