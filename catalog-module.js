@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.0 — с ленивой загрузкой
+// Версия 3.1 — с ленивой загрузкой и бургер-меню
 
 (function() {
     'use strict';
@@ -367,34 +367,32 @@
             return;
         }
 
-        // Если LazyLoader ещё не создан — создаём
+        // Создаём LazyLoader если его нет
         if (!state.lazyLoader) {
             if (typeof LazyLoader !== 'undefined') {
                 state.lazyLoader = new LazyLoader({
                     rootMargin: '200px',
-                    batchSize: 12
+                    batchSize: 20
                 });
             } else {
-                // Если LazyLoader не загружен — просто рендерим всё
                 renderAll(items);
                 return;
             }
         }
 
-        // Функция рендеринга одной карточки для LazyLoader
+        // Функция рендеринга одной карточки
         const renderCard = (item, index) => {
             return createItemCard(item, index);
         };
 
-        // Обновляем или инициализируем
-        if (state.lazyLoader.items.length > 0) {
-            state.lazyLoader.updateItems(items);
-        } else {
+        // Если это первая инициализация
+        if (state.lazyLoader.items.length === 0) {
             state.lazyLoader.init(container, items, renderCard);
+        } else {
+            state.lazyLoader.updateItems(items);
         }
     }
 
-    // Рендер всего сразу (если LazyLoader не загружен)
     function renderAll(items) {
         const container = document.getElementById(state.config.containerId);
         if (!container) return;
@@ -708,7 +706,13 @@
     // ============================================================
 
     function loadNavigationModule() {
+        // Проверяем, не загружена ли уже навигация
         if (document.getElementById('mainNavigation')) {
+            console.log('Навигация уже загружена');
+            // Инициализируем бургер
+            if (typeof window.initBurgerMenu === 'function') {
+                window.initBurgerMenu();
+            }
             return Promise.resolve();
         }
 
@@ -719,7 +723,26 @@
             })
             .then(html => {
                 document.body.insertAdjacentHTML('afterbegin', html);
-                console.log('✅ Навигация загружена');
+                console.log('✅ Навигация загружена через fetch');
+                
+                // Инициализируем бургер после загрузки
+                if (typeof window.initBurgerMenu === 'function') {
+                    window.initBurgerMenu();
+                } else {
+                    // Если функция ещё не определена, ждём и пробуем снова
+                    setTimeout(() => {
+                        if (typeof window.initBurgerMenu === 'function') {
+                            window.initBurgerMenu();
+                        } else {
+                            console.warn('⚠️ initBurgerMenu не найдена');
+                            // Запускаем встроенный скрипт из navigation-module.html
+                            const scripts = document.querySelectorAll('#mainNavigation script');
+                            if (scripts.length > 0) {
+                                // eval(scripts[scripts.length - 1].textContent);
+                            }
+                        }
+                    }, 200);
+                }
             })
             .catch(error => {
                 console.warn('Ошибка загрузки навигации:', error);
@@ -796,21 +819,36 @@
             window.setCurrentDate();
         }
 
-        // Загружаем LazyLoader если не загружен
-        if (typeof LazyLoader === 'undefined') {
-            const script = document.createElement('script');
-            script.src = 'lazy-loader.js';
-            script.onload = function() {
-                console.log('✅ LazyLoader загружен');
+        // Сначала загружаем навигацию
+        loadNavigationModule()
+            .then(() => {
+                // Загружаем LazyLoader если не загружен
+                if (typeof LazyLoader === 'undefined') {
+                    return new Promise((resolve) => {
+                        const script = document.createElement('script');
+                        script.src = 'lazy-loader.js';
+                        script.onload = function() {
+                            console.log('✅ LazyLoader загружен');
+                            resolve();
+                        };
+                        script.onerror = function() {
+                            console.warn('⚠️ LazyLoader не загружен, работаем без него');
+                            resolve();
+                        };
+                        document.head.appendChild(script);
+                    });
+                }
+            })
+            .then(() => {
+                // Загружаем данные
                 loadData();
-            };
-            document.head.appendChild(script);
-        } else {
-            loadData();
-        }
+            })
+            .catch(() => {
+                // В любом случае загружаем данные
+                loadData();
+            });
 
-        loadNavigationModule();
-
+        // Подключаем обработку тегов
         if (typeof tagsModal === 'undefined') {
             const script = document.createElement('script');
             script.src = 'tags-info.js';
