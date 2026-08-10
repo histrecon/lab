@@ -1,5 +1,4 @@
-// catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.1 — с ленивой загрузкой и бургер-меню
+// catalog-module.js - исправленная версия (без бургера)
 
 (function() {
     'use strict';
@@ -215,6 +214,111 @@
     }
 
     // ============================================================
+    // КЛАСС LAZYLOADER (встроенный, без внешних зависимостей)
+    // ============================================================
+
+    class LazyLoader {
+        constructor(options = {}) {
+            this.rootMargin = options.rootMargin || '200px';
+            this.threshold = options.threshold || 0.1;
+            this.items = [];
+            this.container = null;
+            this.renderCallback = null;
+            this.observer = null;
+            this.loaded = new Set();
+            this.initialRenderDone = false;
+        }
+
+        init(container, items, renderCallback) {
+            this.container = container;
+            this.items = items;
+            this.renderCallback = renderCallback;
+            this.loaded.clear();
+            this.initialRenderDone = false;
+            this.renderPlaceholders();
+            this.setupObserver();
+        }
+
+        renderPlaceholders() {
+            this.container.innerHTML = '';
+            // Показываем первые 20 элементов сразу
+            const initialCount = Math.min(20, this.items.length);
+            for (let i = 0; i < initialCount; i++) {
+                if (i < this.items.length) {
+                    const card = this.renderCallback(this.items[i], i);
+                    this.container.appendChild(card);
+                    this.loaded.add(i);
+                }
+            }
+            // Для остальных создаём плейсхолдеры
+            for (let i = initialCount; i < this.items.length; i++) {
+                const placeholder = this.createPlaceholder(i);
+                this.container.appendChild(placeholder);
+            }
+            this.initialRenderDone = true;
+        }
+
+        createPlaceholder(index) {
+            const div = document.createElement('div');
+            div.className = 'card-placeholder';
+            div.dataset.index = index;
+            div.style.cssText = `
+                min-height: 350px;
+                background: linear-gradient(135deg, #f0e8d8 25%, #e8ddd0 50%, #f0e8d8 75%);
+                background-size: 200% 100%;
+                animation: skeleton-loading 1.5s infinite;
+                border-radius: 15px;
+            `;
+            return div;
+        }
+
+        setupObserver() {
+            if (this.observer) {
+                this.observer.disconnect();
+            }
+            this.observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const placeholder = entry.target;
+                        const index = parseInt(placeholder.dataset.index);
+                        if (!isNaN(index) && !this.loaded.has(index) && index < this.items.length) {
+                            this.loaded.add(index);
+                            const card = this.renderCallback(this.items[index], index);
+                            placeholder.replaceWith(card);
+                        }
+                    }
+                });
+            }, { 
+                rootMargin: this.rootMargin,
+                threshold: this.threshold 
+            });
+
+            // Наблюдаем за всеми плейсхолдерами
+            this.container.querySelectorAll('.card-placeholder').forEach(el => {
+                this.observer.observe(el);
+            });
+        }
+
+        updateItems(newItems) {
+            this.items = newItems;
+            this.loaded.clear();
+            this.initialRenderDone = false;
+            // Полная перерисовка
+            this.renderPlaceholders();
+            this.setupObserver();
+        }
+
+        destroy() {
+            if (this.observer) {
+                this.observer.disconnect();
+                this.observer = null;
+            }
+            this.loaded.clear();
+            this.initialRenderDone = false;
+        }
+    }
+
+    // ============================================================
     // СОЗДАНИЕ КАРТОЧКИ
     // ============================================================
 
@@ -289,16 +393,13 @@
             </div>
         `;
 
-        // Обработчики событий
         attachCardEvents(card, item);
-
         return card;
     }
 
     function attachCardEvents(card, item) {
         const config = state.config;
 
-        // Клик по локации
         const locationEl = card.querySelector(`.${config.locationClass}`);
         if (locationEl) {
             locationEl.addEventListener('click', function(e) {
@@ -307,12 +408,12 @@
             });
         }
 
-        // Кнопки "Читать далее"
         const readMoreBtns = card.querySelectorAll(`.${config.readMoreBtnClass}`);
         readMoreBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const wrapper = this.closest(`.${config.fieldClass}`).querySelector(`.${config.descriptionWrapperClass}`);
+                if (!wrapper) return;
                 const isExpanded = wrapper.classList.contains('expanded');
                 
                 if (isExpanded) {
@@ -325,12 +426,12 @@
             });
         });
 
-        // Кнопки специализации для магазинов
         const specBtns = card.querySelectorAll('.shop-specialization-btn');
         specBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const wrapper = this.closest(`.${config.fieldClass}`).querySelector('.shop-specialization-wrapper');
+                if (!wrapper) return;
                 const isExpanded = wrapper.classList.contains('expanded');
                 
                 if (isExpanded) {
@@ -345,7 +446,7 @@
     }
 
     // ============================================================
-    // ОТОБРАЖЕНИЕ С ЛЕНИВОЙ ЗАГРУЗКОЙ
+    // ОТОБРАЖЕНИЕ
     // ============================================================
 
     function displayItems(items) {
@@ -367,41 +468,19 @@
             return;
         }
 
-        // Создаём LazyLoader если его нет
         if (!state.lazyLoader) {
-            if (typeof LazyLoader !== 'undefined') {
-                state.lazyLoader = new LazyLoader({
-                    rootMargin: '200px',
-                    batchSize: 20
-                });
-            } else {
-                renderAll(items);
-                return;
-            }
+            state.lazyLoader = new LazyLoader({
+                rootMargin: '200px'
+            });
         }
 
-        // Функция рендеринга одной карточки
-        const renderCard = (item, index) => {
-            return createItemCard(item, index);
-        };
+        const renderCard = (item, index) => createItemCard(item, index);
 
-        // Если это первая инициализация
         if (state.lazyLoader.items.length === 0) {
             state.lazyLoader.init(container, items, renderCard);
         } else {
             state.lazyLoader.updateItems(items);
         }
-    }
-
-    function renderAll(items) {
-        const container = document.getElementById(state.config.containerId);
-        if (!container) return;
-
-        container.innerHTML = '';
-        items.forEach(item => {
-            const card = createItemCard(item);
-            container.appendChild(card);
-        });
     }
 
     // ============================================================
@@ -480,7 +559,6 @@
             }
         }
 
-        // События с debounce для поиска
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             let timeout;
@@ -504,12 +582,6 @@
         if (specFilter) specFilter.addEventListener('change', applyFilters);
 
         resetButton?.addEventListener('click', resetFilters);
-
-        // Кнопка расшифровки тегов
-        const tagsBtn = document.getElementById('tagsInfoButton');
-        if (tagsBtn && typeof tagsModal !== 'undefined') {
-            // Модалка уже подгружается через tags-info.js
-        }
     }
 
     function applyFilters() {
@@ -538,7 +610,6 @@
         displayItems(state.filteredItems);
         updateStats();
 
-        // Возвращаем скролл к началу списка
         const container = document.getElementById(state.config.containerId);
         if (container) {
             container.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -702,17 +773,12 @@
     };
 
     // ============================================================
-    // НАВИГАЦИЯ
+    // НАВИГАЦИЯ (без бургера)
     // ============================================================
 
     function loadNavigationModule() {
-        // Проверяем, не загружена ли уже навигация
         if (document.getElementById('mainNavigation')) {
-            console.log('Навигация уже загружена');
-            // Инициализируем бургер
-            if (typeof window.initBurgerMenu === 'function') {
-                window.initBurgerMenu();
-            }
+            console.log('✅ Навигация уже загружена');
             return Promise.resolve();
         }
 
@@ -724,29 +790,62 @@
             .then(html => {
                 document.body.insertAdjacentHTML('afterbegin', html);
                 console.log('✅ Навигация загружена через fetch');
-                
-                // Инициализируем бургер после загрузки
-                if (typeof window.initBurgerMenu === 'function') {
-                    window.initBurgerMenu();
-                } else {
-                    // Если функция ещё не определена, ждём и пробуем снова
-                    setTimeout(() => {
-                        if (typeof window.initBurgerMenu === 'function') {
-                            window.initBurgerMenu();
-                        } else {
-                            console.warn('⚠️ initBurgerMenu не найдена');
-                            // Запускаем встроенный скрипт из navigation-module.html
-                            const scripts = document.querySelectorAll('#mainNavigation script');
-                            if (scripts.length > 0) {
-                                // eval(scripts[scripts.length - 1].textContent);
-                            }
-                        }
-                    }, 200);
-                }
+                // Подсветка активной страницы (уже есть в navigation-module.html)
             })
             .catch(error => {
-                console.warn('Ошибка загрузки навигации:', error);
+                console.warn('⚠️ Ошибка загрузки навигации:', error);
+                createFallbackNavigation();
             });
+    }
+
+    function createFallbackNavigation() {
+        if (document.getElementById('fallbackNav')) return;
+        
+        const fallbackNav = document.createElement('nav');
+        fallbackNav.id = 'fallbackNav';
+        fallbackNav.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 20, 10, 0.95);
+            border-bottom: 2px solid #d4a574;
+            z-index: 999;
+            padding: 6px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 4px;
+            min-height: 48px;
+        `;
+        fallbackNav.innerHTML = `
+            <a href="index.html" style="color: #e6a336; text-decoration: none; font-weight: bold; font-size: 0.9rem; padding: 4px 10px; border: 1px solid #d4a574; border-radius: 5px; background: rgba(139, 69, 19, 0.2); white-space: nowrap;">
+                🏠 РеконХаб
+            </a>
+            <div style="display: flex; gap: 4px; flex-wrap: wrap; align-items: center;">
+                <a href="index.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">Главная</a>
+                <a href="clubs.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">Клубы</a>
+                <a href="festivals.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">Мероприятия</a>
+                <a href="shops.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;">Магазины</a>
+                <a href="feedback.html" style="color: #333; text-decoration: none; padding: 4px 10px; background: linear-gradient(135deg, #e6a336, #d1891c); border-radius: 4px; font-weight: 700; font-size: 0.8rem; border: 1px solid #c17e1a;">💬 Связь</a>
+            </div>
+        `;
+        document.body.insertAdjacentElement('afterbegin', fallbackNav);
+        
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const links = fallbackNav.querySelectorAll('a');
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === currentPage) {
+                link.style.background = 'linear-gradient(135deg, #e6a336, #d1891c)';
+                link.style.color = '#333';
+                link.style.borderColor = '#c17e1a';
+                link.style.borderRadius = '4px';
+            }
+        });
+        
+        console.log('⚠️ Используется резервная навигация');
     }
 
     // ============================================================
@@ -763,43 +862,60 @@
             const response = await fetch(config.dataFile);
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const data = await response.json();
-            state.allItems = data[config.dataKey] || [];
-
-            state.countries = new Set();
-            state.cities = new Set();
-            state.eras = new Set();
-            state.specializations = new Set();
-
-            state.allItems.forEach(item => {
-                state.countries.add(item.country);
-                state.cities.add(item.city);
-                if (item.eras) {
-                    item.eras.forEach(era => state.eras.add(era));
-                }
-                if (state.type === 'shops' && item.specialization) {
-                    const specs = item.specialization.split(',').map(s => s.trim()).filter(s => s);
-                    specs.forEach(spec => state.specializations.add(spec));
-                }
-            });
-
-            initFilters();
-            initMap();
-            state.filteredItems = [...state.allItems];
-            displayItems(state.filteredItems);
-            updateStats();
-
+            processData(data[config.dataKey] || []);
         } catch (error) {
             console.error('Ошибка загрузки данных:', error);
             const container = document.getElementById(state.config.containerId);
             if (container) {
                 container.innerHTML = `
                     <div class="no-results">
-                        <h3>Ошибка загрузки данных</h3>
+                        <h3>⚠️ Ошибка загрузки данных</h3>
                         <p>Не удалось загрузить данные. Проверьте наличие файла ${state.config.dataFile}</p>
+                        <button onclick="location.reload()" style="
+                            margin-top: 15px;
+                            padding: 10px 30px;
+                            background: linear-gradient(135deg, #e6a336, #d1891c);
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            color: #333;
+                        ">Обновить</button>
                     </div>
                 `;
             }
         }
+    }
+
+    function processData(items) {
+        state.allItems = items;
+
+        state.countries = new Set();
+        state.cities = new Set();
+        state.eras = new Set();
+        state.specializations = new Set();
+
+        state.allItems.forEach(item => {
+            state.countries.add(item.country);
+            state.cities.add(item.city);
+            if (item.eras) {
+                item.eras.forEach(era => state.eras.add(era));
+            }
+            if (state.type === 'shops' && item.specialization) {
+                const specs = item.specialization.split(',').map(s => s.trim()).filter(s => s);
+                specs.forEach(spec => state.specializations.add(spec));
+            }
+        });
+
+        initFilters();
+        // Инициализируем карту после загрузки данных
+        if (typeof L !== 'undefined' && !state.map) {
+            initMap();
+        }
+        state.filteredItems = [...state.allItems];
+        displayItems(state.filteredItems);
+        updateStats();
     }
 
     // ============================================================
@@ -819,58 +935,92 @@
             window.setCurrentDate();
         }
 
-        // Сначала загружаем навигацию
+        // Сначала загружаем навигацию, потом данные
         loadNavigationModule()
             .then(() => {
-                // Загружаем LazyLoader если не загружен
-                if (typeof LazyLoader === 'undefined') {
-                    return new Promise((resolve) => {
-                        const script = document.createElement('script');
-                        script.src = 'lazy-loader.js';
-                        script.onload = function() {
-                            console.log('✅ LazyLoader загружен');
-                            resolve();
-                        };
-                        script.onerror = function() {
-                            console.warn('⚠️ LazyLoader не загружен, работаем без него');
-                            resolve();
-                        };
-                        document.head.appendChild(script);
-                    });
-                }
-            })
-            .then(() => {
-                // Загружаем данные
                 loadData();
             })
             .catch(() => {
-                // В любом случае загружаем данные
                 loadData();
             });
-
-        // Подключаем обработку тегов
-        if (typeof tagsModal === 'undefined') {
-            const script = document.createElement('script');
-            script.src = 'tags-info.js';
-            document.body.appendChild(script);
-        }
     }
 
     // ============================================================
     // ЗАПУСК
     // ============================================================
 
+    // Добавляем стили для скелетонов
+    const styleSheet = document.createElement('style');
+    styleSheet.textContent = `
+        @keyframes skeleton-loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+        .card-placeholder {
+            animation: skeleton-loading 1.5s infinite;
+            border-radius: 15px;
+            min-height: 350px;
+        }
+        .card-placeholder:first-child {
+            animation-delay: 0s;
+        }
+        .card-placeholder:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+        .card-placeholder:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+        .card-placeholder:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+        .card-placeholder:nth-child(5) {
+            animation-delay: 0.4s;
+        }
+        .card-placeholder:nth-child(6) {
+            animation-delay: 0.5s;
+        }
+    `;
+    document.head.appendChild(styleSheet);
+
+    // Запускаем
+    function safeInit() {
+        try {
+            init();
+        } catch (error) {
+            console.error('Ошибка инициализации каталога:', error);
+            const containers = document.querySelectorAll('.clubs-container, .festivals-container, .shops-container');
+            containers.forEach(container => {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <h3>⚠️ Ошибка загрузки</h3>
+                        <p>Не удалось загрузить модуль каталога. Пожалуйста, обновите страницу.</p>
+                        <button onclick="location.reload()" style="
+                            margin-top: 15px;
+                            padding: 10px 30px;
+                            background: linear-gradient(135deg, #e6a336, #d1891c);
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 1rem;
+                            color: #333;
+                        ">Обновить</button>
+                    </div>
+                `;
+            });
+        }
+    }
+
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('DOMContentLoaded', safeInit);
     } else {
-        init();
+        safeInit();
     }
 
     // ============================================================
     // ЭКСПОРТ
     // ============================================================
 
-    window.loadNavigationModule = loadNavigationModule;
     window.catalogModule = {
         state: state,
         CONFIG: CONFIG,
@@ -884,8 +1034,7 @@
         renderEraTags: renderEraTags,
         renderDescription: renderDescription,
         renderFooterLinks: renderFooterLinks,
-        loadNavigationModule: loadNavigationModule,
-        setCurrentDate: window.setCurrentDate
+        loadNavigationModule: loadNavigationModule
     };
 
 })();
