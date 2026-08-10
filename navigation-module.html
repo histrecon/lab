@@ -31,11 +31,11 @@
                     <span>Магазины</span>
                 </a>
             </div>
-            <!-- Колонка 3: Предложка + Донат -->
+            <!-- Колонка 3: Обратная связь + Донат -->
             <div class="nav-column">
                 <a href="feedback.html" class="nav-menu-item feedback-btn">
-                    <span>📝</span>
-                    <span>Предложка</span>
+                    <span>💬</span>
+                    <span>Обратная связь</span>
                 </a>
                 <label for="donateToggle" class="donate-btn">
                     <span>❤️</span>
@@ -98,7 +98,7 @@
     }
 
     /* ============================================================
-       ЛОГОТИП — ВСЕГДА СЛЕВА, НЕ СДВИГАЕТСЯ
+       ЛОГОТИП — ВСЕГДА СЛЕВА, ТОНКИЙ ШРИФТ
        ============================================================ */
 
     .nav-logo {
@@ -108,45 +108,45 @@
         gap: 2px;
         color: #e6a336;
         text-decoration: none;
-        font-weight: 900; /* Жирный шрифт */
-        font-size: 1rem;
+        font-weight: 600; /* Умеренно жирный */
+        font-size: 0.9rem;
         padding: 6px 12px;
-        border: 2px solid #d4a574; /* Толще рамка */
+        border: 1.5px solid #d4a574;
         border-radius: 8px;
-        background: rgba(139, 69, 19, 0.25);
+        background: rgba(139, 69, 19, 0.2);
         transition: all 0.3s;
         flex-shrink: 0;
         white-space: nowrap;
         z-index: 10;
-        min-width: 70px;
-        letter-spacing: 0.5px;
+        min-width: 65px;
+        letter-spacing: 0.3px;
     }
 
     .nav-logo span:first-child {
-        font-size: 1.6rem;
-        font-weight: 900;
+        font-size: 1.4rem;
+        font-weight: 600;
     }
     .nav-logo span:last-child {
-        font-size: 0.75rem;
-        opacity: 0.9;
-        font-weight: 900;
-        letter-spacing: 0.5px;
+        font-size: 0.7rem;
+        opacity: 0.85;
+        font-weight: 600;
+        letter-spacing: 0.3px;
     }
 
     .nav-logo:hover {
-        background: rgba(230, 163, 54, 0.3);
+        background: rgba(230, 163, 54, 0.25);
         transform: translateY(-2px);
         border-color: #e6a336;
     }
 
     /* ============================================================
-       МЕНЮ — ТРИ ВЕРТИКАЛЬНЫЕ КОЛОНКИ
+       МЕНЮ — ТРИ КОЛОНКИ, ТОНКИЙ ШРИФТ
        ============================================================ */
 
     .nav-menu {
         display: flex;
         flex-direction: row;
-        gap: 12px;
+        gap: 10px;
         align-items: stretch;
         justify-content: flex-end;
         flex: 1;
@@ -163,26 +163,26 @@
     .nav-menu-item {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
         color: #f5ebd8;
         text-decoration: none;
-        padding: 6px 14px;
+        padding: 5px 12px;
         border-radius: 6px;
         transition: all 0.3s;
-        font-weight: 700; /* Жирный шрифт */
-        font-size: 0.9rem;
-        border: 1.5px solid transparent;
-        background: rgba(255, 255, 255, 0.03);
+        font-weight: 500; /* Тонкий шрифт */
+        font-size: 0.8rem; /* Меньше размер */
+        border: 1px solid transparent;
+        background: rgba(255, 255, 255, 0.02);
         cursor: pointer;
         font-family: inherit;
         white-space: nowrap;
         width: 100%;
         justify-content: center;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
     }
 
     .nav-menu-item:hover {
-        background: rgba(230, 163, 54, 0.2);
+        background: rgba(230, 163, 54, 0.15);
         color: #ffcc66;
         border-color: #d4a574;
         transform: translateY(-1px);
@@ -192,20 +192,20 @@
         background: linear-gradient(135deg, #e6a336, #d1891c);
         color: #333;
         border-color: #c17e1a;
-        font-weight: 800;
+        font-weight: 600;
     }
 
     .nav-menu-item span:first-child {
-        font-size: 1.1rem;
-        min-width: 24px;
-        font-weight: 700;
+        font-size: 1rem;
+        min-width: 22px;
+        font-weight: 500;
     }
 
     .feedback-btn {
         background: linear-gradient(135deg, #e6a336, #d1891c);
         color: #333;
         border-color: #c17e1a;
-        font-weight: 800;
+        font-weight: 600;
     }
 
     .feedback-btn:hover {
@@ -217,14 +217,14 @@
     .donate-btn {
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 5px;
         color: #ff8a8a;
-        background: rgba(255, 50, 50, 0.15);
-        border: 1.5px solid #ff6b6b;
+        background: rgba(255, 50, 50, 0.12);
+        border: 1px solid #ff6b6b;
         border-radius: 6px;
-        padding: 6px 14px;
-        font-weight: 700; /* Жирный шрифт */
-        font-size: 0.9rem;
+        padding: 5px 12px;
+        font-weight: 500; /* Тонкий шрифт */
+        font-size: 0.8rem;
         cursor: pointer;
         transition: all 0.3s;
         font-family: inherit;
@@ -232,17 +232,17 @@
         width: 100%;
         justify-content: center;
         white-space: nowrap;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
     }
 
     .donate-btn span:first-child {
-        font-size: 1.1rem;
-        min-width: 24px;
-        font-weight: 700;
+        font-size: 1rem;
+        min-width: 22px;
+        font-weight: 500;
     }
 
     .donate-btn:hover {
-        background: rgba(255, 50, 50, 0.3);
+        background: rgba(255, 50, 50, 0.25);
         color: #ff4444;
         border-color: #ff4444;
         transform: translateY(-1px);
@@ -308,7 +308,7 @@
         color: #f5ebd8;
         font-size: 1.5rem;
         margin: 0 0 8px 0;
-        font-weight: 700;
+        font-weight: 600;
     }
 
     .donate-modal-content p {
@@ -334,7 +334,7 @@
         border-radius: 10px;
         color: #f5ebd8;
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 500;
         font-size: 1rem;
         transition: all 0.3s;
         min-width: 100px;
@@ -349,110 +349,27 @@
     }
 
     /* ============================================================
-       АДАПТИВНОСТЬ — КОМПЬЮТЕР (> 768px)
-       ============================================================ */
-
-    /* Всё уже настроено выше */
-
-    /* ============================================================
-       ТЕЛЕФОНЫ (до 768px) — логотип всё ещё слева
+       АДАПТИВНОСТЬ — ТЕЛЕФОНЫ
        ============================================================ */
 
     @media (max-width: 768px) {
         .navigation-module {
-            min-height: 70px;
-            padding: 8px 12px;
+            min-height: 65px;
+            padding: 6px 10px;
         }
 
         .nav-container {
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
-            justify-content: flex-start; /* Логотип остаётся слева */
+            justify-content: flex-start;
         }
 
-        /* ЛОГОТИП ОСТАЁТСЯ СЛЕВА */
         .nav-logo {
-            padding: 6px 12px;
-            min-width: 60px;
+            padding: 5px 10px;
+            min-width: 55px;
             flex-direction: row;
-            gap: 6px;
-            border-width: 2px;
-        }
-        .nav-logo span:first-child {
-            font-size: 1.4rem;
-        }
-        .nav-logo span:last-child {
-            font-size: 0.8rem;
-            opacity: 1;
-        }
-
-        /* МЕНЮ — ТРИ КОЛОНКИ, КРУПНЕЕ */
-        .nav-menu {
-            gap: 16px;
-            flex: 1 1 100%;
-            justify-content: center;
-            padding-top: 4px;
-        }
-
-        .nav-column {
-            gap: 6px;
-        }
-
-        .nav-menu-item {
-            font-size: 1rem;
-            padding: 8px 16px;
-            gap: 8px;
-            border-radius: 8px;
+            gap: 5px;
             border-width: 1.5px;
-            font-weight: 700;
-        }
-        .nav-menu-item span:first-child {
-            font-size: 1.3rem;
-            min-width: 28px;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 1rem;
-        }
-
-        .donate-btn {
-            font-size: 1rem;
-            padding: 8px 16px;
-            gap: 8px;
-            border-radius: 8px;
-            border-width: 1.5px;
-            font-weight: 700;
-        }
-        .donate-btn span:first-child {
-            font-size: 1.3rem;
-            min-width: 28px;
-        }
-        .donate-btn span:last-child {
-            font-size: 1rem;
-        }
-
-        .donate-modal-content {
-            padding: 24px;
-        }
-    }
-
-    /* ============================================================
-       МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 480px)
-       ============================================================ */
-
-    @media (max-width: 480px) {
-        .navigation-module {
-            min-height: 80px;
-            padding: 8px 8px;
-        }
-
-        .nav-container {
-            gap: 6px;
-        }
-
-        .nav-logo {
-            padding: 4px 10px;
-            min-width: 50px;
-            border-width: 2px;
         }
         .nav-logo span:first-child {
             font-size: 1.2rem;
@@ -462,7 +379,9 @@
         }
 
         .nav-menu {
-            gap: 10px;
+            gap: 12px;
+            flex: 1 1 100%;
+            justify-content: center;
             padding-top: 4px;
         }
 
@@ -471,49 +390,49 @@
         }
 
         .nav-menu-item {
-            font-size: 0.9rem;
-            padding: 8px 12px;
-            gap: 6px;
-            border-radius: 8px;
-            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            gap: 5px;
+            border-radius: 6px;
+            font-weight: 500;
         }
         .nav-menu-item span:first-child {
-            font-size: 1.1rem;
-            min-width: 24px;
+            font-size: 0.9rem;
+            min-width: 22px;
         }
         .nav-menu-item span:last-child {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
         }
 
         .donate-btn {
-            font-size: 0.9rem;
-            padding: 8px 12px;
-            gap: 6px;
-            border-radius: 8px;
-            font-weight: 700;
+            font-size: 0.75rem;
+            padding: 6px 12px;
+            gap: 5px;
+            border-radius: 6px;
+            font-weight: 500;
         }
         .donate-btn span:first-child {
-            font-size: 1.1rem;
-            min-width: 24px;
+            font-size: 0.9rem;
+            min-width: 22px;
         }
         .donate-btn span:last-child {
-            font-size: 0.9rem;
+            font-size: 0.75rem;
         }
     }
 
-    /* ============================================================
-       ОЧЕНЬ МАЛЕНЬКИЕ (до 380px)
-       ============================================================ */
-
-    @media (max-width: 380px) {
+    @media (max-width: 480px) {
         .navigation-module {
-            min-height: 90px;
+            min-height: 70px;
             padding: 6px 6px;
+        }
+
+        .nav-container {
+            gap: 6px;
         }
 
         .nav-logo {
             padding: 4px 8px;
-            min-width: 44px;
+            min-width: 48px;
         }
         .nav-logo span:first-child {
             font-size: 1rem;
@@ -523,7 +442,7 @@
         }
 
         .nav-menu {
-            gap: 6px;
+            gap: 8px;
         }
 
         .nav-column {
@@ -531,33 +450,68 @@
         }
 
         .nav-menu-item {
-            font-size: 0.75rem;
-            padding: 6px 8px;
+            font-size: 0.65rem;
+            padding: 5px 8px;
             gap: 4px;
-            border-radius: 6px;
-            font-weight: 700;
+            border-radius: 5px;
+            font-weight: 500;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             min-width: 20px;
         }
         .nav-menu-item span:last-child {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
         }
 
         .donate-btn {
-            font-size: 0.75rem;
-            padding: 6px 8px;
+            font-size: 0.65rem;
+            padding: 5px 8px;
             gap: 4px;
-            border-radius: 6px;
-            font-weight: 700;
+            border-radius: 5px;
+            font-weight: 500;
         }
         .donate-btn span:first-child {
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             min-width: 20px;
         }
         .donate-btn span:last-child {
-            font-size: 0.75rem;
+            font-size: 0.65rem;
+        }
+    }
+
+    @media (max-width: 380px) {
+        .nav-logo span:first-child {
+            font-size: 0.85rem;
+        }
+        .nav-logo span:last-child {
+            font-size: 0.5rem;
+        }
+
+        .nav-menu-item {
+            font-size: 0.55rem;
+            padding: 4px 6px;
+            gap: 3px;
+        }
+        .nav-menu-item span:first-child {
+            font-size: 0.7rem;
+            min-width: 18px;
+        }
+        .nav-menu-item span:last-child {
+            font-size: 0.55rem;
+        }
+
+        .donate-btn {
+            font-size: 0.55rem;
+            padding: 4px 6px;
+            gap: 3px;
+        }
+        .donate-btn span:first-child {
+            font-size: 0.7rem;
+            min-width: 18px;
+        }
+        .donate-btn span:last-child {
+            font-size: 0.55rem;
         }
     }
 </style>
@@ -596,6 +550,6 @@
             }
         });
 
-        console.log('✅ Навигация загружена (логотип слева, жирный шрифт, три колонки)');
+        console.log('✅ Навигация загружена (тонкий шрифт, логотип слева, "Обратная связь")');
     })();
 </script>
