@@ -6,7 +6,7 @@
             <span>РеконХаб</span>
         </a>
         
-        <!-- МЕНЮ — на десктопе в строку, на телефоне в две колонки -->
+        <!-- МЕНЮ — ВСЕГДА ДВЕ ВЕРТИКАЛЬНЫЕ КОЛОНКИ -->
         <div class="nav-menu" id="navMenu">
             <!-- Колонка 1: основные разделы -->
             <div class="nav-column">
@@ -75,9 +75,9 @@
         background: rgba(30, 20, 10, 0.95);
         border-bottom: 2px solid #d4a574;
         z-index: 999;
-        padding: 6px 15px;
+        padding: 8px 15px;
         box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
-        min-height: 50px;
+        min-height: 60px;
         display: flex;
         align-items: center;
     }
@@ -89,73 +89,90 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
-        gap: 8px;
+        gap: 12px;
         position: relative;
     }
 
     .nav-logo {
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 6px;
+        gap: 2px;
         color: #e6a336;
         text-decoration: none;
         font-weight: bold;
         font-size: 1rem;
-        padding: 4px 10px;
+        padding: 6px 10px;
         border: 1px solid #d4a574;
-        border-radius: 6px;
+        border-radius: 8px;
         background: rgba(139, 69, 19, 0.2);
         transition: all 0.3s;
-        height: 32px;
         flex-shrink: 0;
         white-space: nowrap;
         z-index: 10;
+        min-width: 60px;
+    }
+
+    .nav-logo span:first-child {
+        font-size: 1.4rem;
+    }
+    .nav-logo span:last-child {
+        font-size: 0.7rem;
+        opacity: 0.8;
     }
 
     .nav-logo:hover {
         background: rgba(230, 163, 54, 0.2);
-        transform: translateY(-1px);
+        transform: translateY(-2px);
     }
 
     /* ============================================================
-       МЕНЮ — ДЕСКТОП (в строку)
+       МЕНЮ — ВСЕГДА ДВЕ ВЕРТИКАЛЬНЫЕ КОЛОНКИ
        ============================================================ */
 
     .nav-menu {
         display: flex;
-        gap: 8px;
-        align-items: center;
-        height: 100%;
-        flex-wrap: nowrap;
+        flex-direction: row;
+        gap: 12px;
+        align-items: stretch;
         justify-content: flex-end;
-        transition: all 0.3s ease;
+        flex: 1;
     }
 
-    /* На десктопе колонки работают как строка */
     .nav-column {
         display: flex;
-        gap: 6px;
-        align-items: center;
-        flex-wrap: nowrap;
+        flex-direction: column;
+        gap: 4px;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    .nav-column:first-child {
+        align-items: flex-end;
+    }
+
+    .nav-column:last-child {
+        align-items: flex-start;
     }
 
     .nav-menu-item {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         color: #f5ebd8;
         text-decoration: none;
-        padding: 4px 10px;
-        border-radius: 5px;
+        padding: 6px 14px;
+        border-radius: 6px;
         transition: all 0.3s;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         border: 1px solid transparent;
-        height: 32px;
-        background: transparent;
+        background: rgba(255, 255, 255, 0.03);
         cursor: pointer;
         font-family: inherit;
         white-space: nowrap;
+        width: 100%;
+        justify-content: center;
     }
 
     .nav-menu-item:hover {
@@ -169,6 +186,11 @@
         background: linear-gradient(135deg, #e6a336, #d1891c);
         color: #333;
         border-color: #c17e1a;
+    }
+
+    .nav-menu-item span:first-child {
+        font-size: 1.1rem;
+        min-width: 24px;
     }
 
     .feedback-btn {
@@ -187,20 +209,26 @@
     .donate-btn {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 6px;
         color: #ff8a8a;
         background: rgba(255, 50, 50, 0.15);
         border: 1px solid #ff6b6b;
-        border-radius: 5px;
-        padding: 4px 10px;
-        height: 32px;
+        border-radius: 6px;
+        padding: 6px 14px;
         font-weight: 600;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
         cursor: pointer;
         transition: all 0.3s;
         font-family: inherit;
         text-decoration: none;
+        width: 100%;
+        justify-content: center;
         white-space: nowrap;
+    }
+
+    .donate-btn span:first-child {
+        font-size: 1.1rem;
+        min-width: 24px;
     }
 
     .donate-btn:hover {
@@ -310,109 +338,82 @@
     }
 
     /* ============================================================
-       АДАПТИВНОСТЬ — ТЕЛЕФОНЫ (две колонки)
+       АДАПТИВНОСТЬ — для маленьких экранов (уменьшаем шрифты)
        ============================================================ */
 
-    @media (max-width: 820px) {
+    @media (max-width: 768px) {
         .navigation-module {
-            min-height: 44px;
-            padding: 4px 10px;
+            min-height: 56px;
+            padding: 6px 10px;
         }
 
         .nav-container {
-            flex-wrap: nowrap;
-            gap: 6px;
-            align-items: center;
+            gap: 8px;
         }
 
         .nav-logo {
-            font-size: 0.8rem;
-            height: 28px;
-            padding: 3px 8px;
-            flex-shrink: 0;
+            padding: 4px 8px;
+            min-width: 50px;
         }
         .nav-logo span:first-child {
-            font-size: 0.85rem;
+            font-size: 1.2rem;
+        }
+        .nav-logo span:last-child {
+            font-size: 0.6rem;
         }
 
-        /* === МЕНЮ В ДВЕ КОЛОНКИ === */
         .nav-menu {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            gap: 3px 8px;
-            justify-content: flex-end;
-            align-items: center;
-            flex: 1;
+            gap: 8px;
         }
 
         .nav-column {
-            display: flex;
-            flex-direction: row;
             gap: 3px;
-            align-items: center;
-            flex-wrap: wrap;
-            justify-content: flex-end;
         }
 
         .nav-menu-item {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            height: 26px;
-            gap: 3px;
-            border-radius: 4px;
-            white-space: nowrap;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            gap: 4px;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.7rem;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 0.7rem;
-        }
-
-        .feedback-btn {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            height: 26px;
+            font-size: 0.9rem;
+            min-width: 20px;
         }
 
         .donate-btn {
-            font-size: 0.7rem;
-            padding: 3px 8px;
-            height: 26px;
-            gap: 3px;
-            border-radius: 4px;
+            font-size: 0.75rem;
+            padding: 4px 10px;
+            gap: 4px;
         }
         .donate-btn span:first-child {
-            font-size: 0.7rem;
-        }
-        .donate-btn span:last-child {
-            font-size: 0.7rem;
+            font-size: 0.9rem;
+            min-width: 20px;
         }
     }
 
-    /* ============================================================
-       ТЕЛЕФОНЫ (до 600px) — чуть крупнее
-       ============================================================ */
-
-    @media (max-width: 600px) {
+    @media (max-width: 480px) {
         .navigation-module {
-            min-height: 48px;
-            padding: 4px 8px;
+            min-height: 50px;
+            padding: 4px 6px;
+        }
+
+        .nav-container {
+            gap: 4px;
         }
 
         .nav-logo {
-            font-size: 0.75rem;
-            height: 26px;
-            padding: 2px 6px;
-            gap: 3px;
+            padding: 3px 5px;
+            min-width: 40px;
         }
         .nav-logo span:first-child {
-            font-size: 0.8rem;
+            font-size: 1rem;
+        }
+        .nav-logo span:last-child {
+            font-size: 0.5rem;
         }
 
         .nav-menu {
-            gap: 2px 6px;
+            gap: 4px;
         }
 
         .nav-column {
@@ -420,35 +421,25 @@
         }
 
         .nav-menu-item {
-            font-size: 0.7rem;
-            padding: 3px 7px;
-            height: 24px;
-            gap: 2px;
+            font-size: 0.6rem;
+            padding: 3px 6px;
+            gap: 3px;
+            border-radius: 4px;
         }
         .nav-menu-item span:first-child {
             font-size: 0.7rem;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 0.7rem;
-        }
-
-        .feedback-btn {
-            font-size: 0.7rem;
-            padding: 3px 7px;
-            height: 24px;
+            min-width: 16px;
         }
 
         .donate-btn {
-            font-size: 0.7rem;
-            padding: 3px 7px;
-            height: 24px;
-            gap: 2px;
+            font-size: 0.6rem;
+            padding: 3px 6px;
+            gap: 3px;
+            border-radius: 4px;
         }
         .donate-btn span:first-child {
             font-size: 0.7rem;
-        }
-        .donate-btn span:last-child {
-            font-size: 0.7rem;
+            min-width: 16px;
         }
 
         .donate-modal-content {
@@ -466,115 +457,32 @@
         }
     }
 
-    /* ============================================================
-       МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 420px) — всё ещё читаемо
-       ============================================================ */
-
-    @media (max-width: 420px) {
-        .navigation-module {
-            min-height: 44px;
-            padding: 3px 6px;
-        }
-
-        .nav-logo {
-            font-size: 0.65rem;
-            height: 22px;
-            padding: 2px 5px;
-            gap: 2px;
-        }
+    @media (max-width: 360px) {
         .nav-logo span:first-child {
-            font-size: 0.7rem;
+            font-size: 0.8rem;
         }
-
-        .nav-menu {
-            gap: 2px 4px;
-        }
-
-        .nav-column {
-            gap: 2px;
-        }
-
-        .nav-menu-item {
-            font-size: 0.6rem;
-            padding: 2px 5px;
-            height: 20px;
-            gap: 2px;
-            border-radius: 3px;
-            border-width: 1px;
-        }
-        .nav-menu-item span:first-child {
-            font-size: 0.6rem;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 0.6rem;
-        }
-
-        .feedback-btn {
-            font-size: 0.6rem;
-            padding: 2px 5px;
-            height: 20px;
-        }
-
-        .donate-btn {
-            font-size: 0.6rem;
-            padding: 2px 5px;
-            height: 20px;
-            gap: 2px;
-            border-radius: 3px;
-            border-width: 1px;
-        }
-        .donate-btn span:first-child {
-            font-size: 0.6rem;
-        }
-        .donate-btn span:last-child {
-            font-size: 0.6rem;
-        }
-    }
-
-    /* ============================================================
-       ОЧЕНЬ МАЛЕНЬКИЕ (до 350px)
-       ============================================================ */
-
-    @media (max-width: 350px) {
-        .nav-logo {
-            font-size: 0.55rem;
-            height: 18px;
-            padding: 1px 4px;
-        }
-        .nav-logo span:first-child {
-            font-size: 0.6rem;
+        .nav-logo span:last-child {
+            font-size: 0.4rem;
         }
 
         .nav-menu-item {
             font-size: 0.5rem;
-            padding: 1px 4px;
-            height: 18px;
-            gap: 1px;
+            padding: 2px 4px;
+            gap: 2px;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.5rem;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 0.5rem;
-        }
-
-        .feedback-btn {
-            font-size: 0.5rem;
-            padding: 1px 4px;
-            height: 18px;
+            font-size: 0.6rem;
+            min-width: 14px;
         }
 
         .donate-btn {
             font-size: 0.5rem;
-            padding: 1px 4px;
-            height: 18px;
-            gap: 1px;
+            padding: 2px 4px;
+            gap: 2px;
         }
         .donate-btn span:first-child {
-            font-size: 0.5rem;
-        }
-        .donate-btn span:last-child {
-            font-size: 0.5rem;
+            font-size: 0.6rem;
+            min-width: 14px;
         }
     }
 </style>
@@ -613,6 +521,6 @@
             }
         });
 
-        console.log('✅ Навигация загружена (две колонки на телефоне)');
+        console.log('✅ Навигация загружена (всегда две вертикальные колонки)');
     })();
 </script>
