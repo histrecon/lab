@@ -101,6 +101,17 @@
     },
     {
       "id": 10,
+      "name": "Дарьюшкина корзинка",
+      "city": "Новороссийск",
+      "country": "Россия",
+      "eras": ["Средневековье"],
+      "description": "",
+      "specialization": "тканые изделия, питейные рога",
+      "vk": "https://vk.ru/da_korzinka",
+      "website": ""
+    },
+    {
+      "id": 11,
       "name": "BRENNSKIP",
       "city": "Благовещенск",
       "country": "Россия",
