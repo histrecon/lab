@@ -349,12 +349,12 @@
     }
 
     /* ============================================================
-       ТЕЛЕФОНЫ (до 820px) — КРУПНЫЕ КНОПКИ
+       ТЕЛЕФОНЫ (до 820px) — СРЕДНИЙ РАЗМЕР
        ============================================================ */
 
     @media (max-width: 820px) {
         .navigation-module {
-            min-height: 64px;
+            min-height: 60px;
             padding: 6px 12px;
         }
 
@@ -362,10 +362,9 @@
             gap: 8px;
         }
 
-        /* ЛОГОТИП */
         .nav-logo {
             padding: 4px 10px;
-            min-width: 55px;
+            min-width: 52px;
             flex-direction: row;
             gap: 5px;
             border-width: 2px;
@@ -377,74 +376,7 @@
             font-size: 0.7rem;
         }
 
-        /* МЕНЮ — КРУПНЕЕ */
-        .nav-menu {
-            gap: 10px;
-        }
-
-        .nav-column {
-            gap: 5px;
-        }
-
-        .nav-menu-item {
-            font-size: 0.85rem;      /* Было 0.6rem → стало 0.85rem */
-            padding: 7px 12px;       /* Было 4px 8px → стало 7px 12px */
-            gap: 6px;
-            border-radius: 8px;
-            font-weight: 400;
-            border-width: 1.5px;
-        }
-        .nav-menu-item span:first-child {
-            font-size: 1.0rem;       /* Было 0.75rem → стало 1.0rem */
-            min-width: 22px;
-        }
-        .nav-menu-item span:last-child {
-            font-size: 0.85rem;      /* Было 0.6rem → стало 0.85rem */
-        }
-
-        .donate-btn {
-            font-size: 0.85rem;
-            padding: 7px 12px;
-            gap: 6px;
-            border-radius: 8px;
-            font-weight: 400;
-            border-width: 1.5px;
-        }
-        .donate-btn span:first-child {
-            font-size: 1.0rem;
-            min-width: 22px;
-        }
-        .donate-btn span:last-child {
-            font-size: 0.85rem;
-        }
-    }
-
-    /* ============================================================
-       ТЕЛЕФОНЫ (до 600px) — ЕЩЁ КРУПНЕЕ
-       ============================================================ */
-
-    @media (max-width: 600px) {
-        .navigation-module {
-            min-height: 58px;
-            padding: 5px 8px;
-        }
-
-        .nav-container {
-            gap: 6px;
-        }
-
-        .nav-logo {
-            padding: 3px 8px;
-            min-width: 48px;
-            border-width: 1.5px;
-        }
-        .nav-logo span:first-child {
-            font-size: 1.0rem;
-        }
-        .nav-logo span:last-child {
-            font-size: 0.6rem;
-        }
-
+        /* МЕНЮ — СРЕДНИЙ РАЗМЕР */
         .nav-menu {
             gap: 8px;
         }
@@ -454,19 +386,19 @@
         }
 
         .nav-menu-item {
-            font-size: 0.75rem;      /* Было 0.5rem → стало 0.75rem */
-            padding: 6px 10px;       /* Было 3px 5px → стало 6px 10px */
+            font-size: 0.75rem;      /* Между 0.6 и 0.85 → 0.75 */
+            padding: 6px 10px;       /* Между 4px и 7px → 6px */
             gap: 5px;
             border-radius: 7px;
             font-weight: 400;
             border-width: 1.5px;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.9rem;       /* Было 0.6rem → стало 0.9rem */
+            font-size: 0.9rem;       /* Между 0.75 и 1.0 → 0.9 */
             min-width: 20px;
         }
         .nav-menu-item span:last-child {
-            font-size: 0.75rem;      /* Было 0.5rem → стало 0.75rem */
+            font-size: 0.75rem;      /* Между 0.6 и 0.85 → 0.75 */
         }
 
         .donate-btn {
@@ -487,29 +419,29 @@
     }
 
     /* ============================================================
-       МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 420px)
+       ТЕЛЕФОНЫ (до 600px) — СРЕДНИЙ РАЗМЕР
        ============================================================ */
 
-    @media (max-width: 420px) {
+    @media (max-width: 600px) {
         .navigation-module {
-            min-height: 52px;
-            padding: 4px 6px;
+            min-height: 54px;
+            padding: 5px 8px;
         }
 
         .nav-container {
-            gap: 4px;
+            gap: 6px;
         }
 
         .nav-logo {
-            padding: 3px 6px;
-            min-width: 42px;
+            padding: 3px 8px;
+            min-width: 46px;
             border-width: 1.5px;
         }
         .nav-logo span:first-child {
-            font-size: 0.9rem;
+            font-size: 1.0rem;
         }
         .nav-logo span:last-child {
-            font-size: 0.55rem;
+            font-size: 0.6rem;
         }
 
         .nav-menu {
@@ -521,35 +453,102 @@
         }
 
         .nav-menu-item {
-            font-size: 0.65rem;      /* Было 0.45rem → стало 0.65rem */
-            padding: 5px 7px;        /* Было 2px 4px → стало 5px 7px */
+            font-size: 0.65rem;      /* Между 0.5 и 0.75 → 0.65 */
+            padding: 5px 8px;        /* Между 3px и 6px → 5px */
             gap: 4px;
             border-radius: 6px;
             font-weight: 400;
-            border-width: 1px;
+            border-width: 1.5px;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.75rem;      /* Было 0.5rem → стало 0.75rem */
+            font-size: 0.8rem;       /* Между 0.6 и 0.9 → 0.8 */
             min-width: 18px;
         }
         .nav-menu-item span:last-child {
-            font-size: 0.65rem;      /* Было 0.45rem → стало 0.65rem */
+            font-size: 0.65rem;      /* Между 0.5 и 0.75 → 0.65 */
         }
 
         .donate-btn {
             font-size: 0.65rem;
-            padding: 5px 7px;
+            padding: 5px 8px;
             gap: 4px;
             border-radius: 6px;
             font-weight: 400;
-            border-width: 1px;
+            border-width: 1.5px;
         }
         .donate-btn span:first-child {
-            font-size: 0.75rem;
+            font-size: 0.8rem;
             min-width: 18px;
         }
         .donate-btn span:last-child {
             font-size: 0.65rem;
+        }
+    }
+
+    /* ============================================================
+       МАЛЕНЬКИЕ ТЕЛЕФОНЫ (до 420px)
+       ============================================================ */
+
+    @media (max-width: 420px) {
+        .navigation-module {
+            min-height: 48px;
+            padding: 4px 6px;
+        }
+
+        .nav-container {
+            gap: 4px;
+        }
+
+        .nav-logo {
+            padding: 3px 6px;
+            min-width: 40px;
+            border-width: 1.5px;
+        }
+        .nav-logo span:first-child {
+            font-size: 0.85rem;
+        }
+        .nav-logo span:last-child {
+            font-size: 0.5rem;
+        }
+
+        .nav-menu {
+            gap: 5px;
+        }
+
+        .nav-column {
+            gap: 3px;
+        }
+
+        .nav-menu-item {
+            font-size: 0.55rem;      /* Между 0.45 и 0.65 → 0.55 */
+            padding: 4px 6px;        /* Между 2px и 5px → 4px */
+            gap: 3px;
+            border-radius: 5px;
+            font-weight: 400;
+            border-width: 1px;
+        }
+        .nav-menu-item span:first-child {
+            font-size: 0.7rem;       /* Между 0.5 и 0.75 → 0.7 */
+            min-width: 16px;
+        }
+        .nav-menu-item span:last-child {
+            font-size: 0.55rem;      /* Между 0.45 и 0.65 → 0.55 */
+        }
+
+        .donate-btn {
+            font-size: 0.55rem;
+            padding: 4px 6px;
+            gap: 3px;
+            border-radius: 5px;
+            font-weight: 400;
+            border-width: 1px;
+        }
+        .donate-btn span:first-child {
+            font-size: 0.7rem;
+            min-width: 16px;
+        }
+        .donate-btn span:last-child {
+            font-size: 0.55rem;
         }
     }
 
@@ -559,38 +558,38 @@
 
     @media (max-width: 340px) {
         .nav-logo span:first-child {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
         }
         .nav-logo span:last-child {
-            font-size: 0.5rem;
+            font-size: 0.45rem;
         }
 
         .nav-menu-item {
-            font-size: 0.55rem;
-            padding: 4px 5px;
-            gap: 3px;
-            border-radius: 5px;
+            font-size: 0.5rem;
+            padding: 3px 5px;
+            gap: 2px;
+            border-radius: 4px;
         }
         .nav-menu-item span:first-child {
-            font-size: 0.65rem;
-            min-width: 16px;
+            font-size: 0.6rem;
+            min-width: 14px;
         }
         .nav-menu-item span:last-child {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
         }
 
         .donate-btn {
-            font-size: 0.55rem;
-            padding: 4px 5px;
-            gap: 3px;
-            border-radius: 5px;
+            font-size: 0.5rem;
+            padding: 3px 5px;
+            gap: 2px;
+            border-radius: 4px;
         }
         .donate-btn span:first-child {
-            font-size: 0.65rem;
-            min-width: 16px;
+            font-size: 0.6rem;
+            min-width: 14px;
         }
         .donate-btn span:last-child {
-            font-size: 0.55rem;
+            font-size: 0.5rem;
         }
     }
 </style>
@@ -629,6 +628,6 @@
             }
         });
 
-        console.log('✅ Навигация: логотип слева, столбики справа, на телефоне крупные кнопки');
+        console.log('✅ Навигация: оптимальный размер кнопок на телефоне');
     })();
 </script>
