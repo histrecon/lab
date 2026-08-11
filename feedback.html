@@ -35,7 +35,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Навигационный модуль загружается через JS -->
+        <!-- Навигация загружается через JS -->
         
         <div class="feedback-card">
             <div class="feedback-header">
@@ -101,7 +101,6 @@
                         <input type="text" class="form-input" id="eras" name="eras" placeholder="Например: IX в., X в., Средневековье">
                         <span class="form-hint">Укажите эпохи через запятую</span>
                     </div>
-                    <!-- САЙТ ДЛЯ КЛУБА -->
                     <div class="form-group">
                         <label class="form-label" for="clubWebsite">
                             Сайт клуба
@@ -132,7 +131,6 @@
                         <input type="text" class="form-input" id="festivalEras" name="festivalEras" placeholder="Например: IX в., X в., Средневековье">
                         <span class="form-hint">Укажите эпохи через запятую</span>
                     </div>
-                    <!-- САЙТ ДЛЯ МЕРОПРИЯТИЯ -->
                     <div class="form-group">
                         <label class="form-label" for="festivalWebsite">
                             Сайт мероприятия
@@ -158,7 +156,6 @@
                         <input type="text" class="form-input" id="shopEras" name="shopEras" placeholder="Например: Средневековье, XIII в.">
                         <span class="form-hint">Укажите эпохи через запятую</span>
                     </div>
-                    <!-- САЙТ ДЛЯ МАГАЗИНА -->
                     <div class="form-group">
                         <label class="form-label" for="shopWebsite">
                             Сайт магазина
@@ -224,12 +221,20 @@
         </div>
     </div>
     
-    <!-- Подключаем модуль каталога -->
-    <script src="catalog-module.js"></script>
-    
     <script>
-        // === Утилиты ===
-        function showNotification(text, isError = false) {
+        // ============================================================
+        // УТИЛИТЫ
+        // ============================================================
+
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('ru-RU', options);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = formattedDate;
+        }
+
+        function showNotification(text, isError) {
             const existing = document.querySelector('.notification');
             if (existing) existing.remove();
             
@@ -243,13 +248,82 @@
                 setTimeout(() => notification.remove(), 300);
             }, 6000);
         }
-        
-        // === Показ/скрытие полей ===
+
+        // ============================================================
+        // ЗАГРУЗКА НАВИГАЦИИ (самостоятельная)
+        // ============================================================
+
+        function loadNavigationModule() {
+            if (document.getElementById('mainNavigation')) {
+                return Promise.resolve();
+            }
+
+            return fetch('navigation-module.html')
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Не удалось загрузить модуль навигации');
+                    return response.text();
+                })
+                .then(function(html) {
+                    document.body.insertAdjacentHTML('afterbegin', html);
+                    console.log('✅ Навигация загружена в feedback.html');
+                })
+                .catch(function(error) {
+                    console.warn('Ошибка загрузки навигации:', error);
+                    createFallbackNavigation();
+                });
+        }
+
+        // ============================================================
+        // РЕЗЕРВНАЯ НАВИГАЦИЯ
+        // ============================================================
+
+        function createFallbackNavigation() {
+            if (document.getElementById('fallbackNav')) return;
+            
+            var fallbackNav = document.createElement('nav');
+            fallbackNav.id = 'fallbackNav';
+            fallbackNav.style.cssText = [
+                'position: fixed;',
+                'top: 0;',
+                'left: 0;',
+                'right: 0;',
+                'background: rgba(30, 20, 10, 0.95);',
+                'border-bottom: 2px solid #d4a574;',
+                'z-index: 999;',
+                'padding: 8px 12px;',
+                'display: flex;',
+                'justify-content: space-between;',
+                'align-items: center;',
+                'flex-wrap: wrap;',
+                'gap: 6px;',
+                'min-height: 50px;'
+            ].join(' ');
+            
+            fallbackNav.innerHTML = [
+                '<a href="index.html" style="color: #e6a336; text-decoration: none; font-weight: bold; font-size: 0.95rem; padding: 4px 10px; border: 1px solid #d4a574; border-radius: 5px; background: rgba(139, 69, 19, 0.2);">',
+                '   🏠 РеконХаб',
+                '</a>',
+                '<div style="display: flex; gap: 5px; flex-wrap: wrap; align-items: center;">',
+                '   <a href="index.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 0.85rem;">Главная</a>',
+                '   <a href="clubs.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 0.85rem;">Клубы</a>',
+                '   <a href="festivals.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 0.85rem;">Мероприятия</a>',
+                '   <a href="shops.html" style="color: #f5ebd8; text-decoration: none; padding: 4px 10px; border-radius: 4px; font-weight: 600; font-size: 0.85rem;">Магазины</a>',
+                '   <a href="feedback.html" style="color: #333; text-decoration: none; padding: 4px 12px; background: linear-gradient(135deg, #e6a336, #d1891c); border-radius: 4px; font-weight: 700; font-size: 0.85rem; border: 1px solid #c17e1a;">💬 Обратная связь</a>',
+                '</div>'
+            ].join('');
+            
+            document.body.insertAdjacentElement('afterbegin', fallbackNav);
+        }
+
+        // ============================================================
+        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ
+        // ============================================================
+
         function toggleConditionalFields() {
-            const type = document.getElementById('suggestType').value;
-            const clubFields = document.getElementById('clubFields');
-            const festivalFields = document.getElementById('festivalFields');
-            const shopFields = document.getElementById('shopFields');
+            var type = document.getElementById('suggestType').value;
+            var clubFields = document.getElementById('clubFields');
+            var festivalFields = document.getElementById('festivalFields');
+            var shopFields = document.getElementById('shopFields');
             
             clubFields.classList.remove('active');
             festivalFields.classList.remove('active');
@@ -259,101 +333,107 @@
             else if (type === 'festival') festivalFields.classList.add('active');
             else if (type === 'shop') shopFields.classList.add('active');
         }
-        
-        // === Форматирование сообщения ===
+
+        // ============================================================
+        // ФОРМАТИРОВАНИЕ СООБЩЕНИЯ
+        // ============================================================
+
         function formatMessage(data) {
-            const typeLabels = {
+            var typeLabels = {
                 'club': '🏛 Клуб исторической реконструкции',
                 'festival': '🎪 Мероприятие',
                 'shop': '🛒 Магазин или мастерская',
                 'feedback': '💬 Обратная связь'
             };
             
-            let message = `📋 Сообщение для РеконХаб (Единая база исторической реконструкции)\n\n`;
-            message += `📌 Тип: ${typeLabels[data.type] || data.type}\n`;
+            var message = '📋 Сообщение для РеконХаб (Единая база исторической реконструкции)\n\n';
+            message += '📌 Тип: ' + (typeLabels[data.type] || data.type) + '\n';
             
             if (data.type !== 'feedback') {
-                message += `🏷 Название: ${data.name}\n`;
+                message += '🏷 Название: ' + data.name + '\n';
             }
             
             if (data.city) {
-                message += `📍 Город: ${data.city}\n`;
+                message += '📍 Город: ' + data.city + '\n';
             }
             
             if (data.country) {
-                message += `🌍 Страна: ${data.country}\n`;
+                message += '🌍 Страна: ' + data.country + '\n';
             }
             
             if (data.type === 'club' && data.eras) {
-                message += `📅 Исторические эпохи: ${data.eras}\n`;
+                message += '📅 Исторические эпохи: ' + data.eras + '\n';
             }
             if (data.type === 'club' && data.clubWebsite && data.clubWebsite !== 'Не указано') {
-                message += `🌐 Сайт клуба: ${data.clubWebsite}\n`;
+                message += '🌐 Сайт клуба: ' + data.clubWebsite + '\n';
             }
             
             if (data.type === 'festival') {
                 if (data.eventType) {
-                    const eventTypeLabels = {
+                    var eventTypeLabels = {
                         'фестиваль': '🎪 Фестиваль',
                         'турнир': '⚔️ Турнир',
                         'иное': '📌 Иное'
                     };
-                    message += `📌 Тип мероприятия: ${eventTypeLabels[data.eventType] || data.eventType}\n`;
+                    message += '📌 Тип мероприятия: ' + (eventTypeLabels[data.eventType] || data.eventType) + '\n';
                 }
-                if (data.festivalEras) message += `📅 Исторические эпохи: ${data.festivalEras}\n`;
+                if (data.festivalEras) message += '📅 Исторические эпохи: ' + data.festivalEras + '\n';
                 if (data.festivalWebsite && data.festivalWebsite !== 'Не указано') {
-                    message += `🌐 Сайт мероприятия: ${data.festivalWebsite}\n`;
+                    message += '🌐 Сайт мероприятия: ' + data.festivalWebsite + '\n';
                 }
             }
             
             if (data.type === 'shop') {
                 if (data.specialization && data.specialization !== 'Не указано') {
-                    message += `🛠 Специализация: ${data.specialization}\n`;
+                    message += '🛠 Специализация: ' + data.specialization + '\n';
                 }
                 if (data.shopEras && data.shopEras !== 'Не указано') {
-                    message += `📅 Исторические эпохи: ${data.shopEras}\n`;
+                    message += '📅 Исторические эпохи: ' + data.shopEras + '\n';
                 }
                 if (data.shopWebsite && data.shopWebsite !== 'Не указано') {
-                    message += `🌐 Сайт магазина: ${data.shopWebsite}\n`;
+                    message += '🌐 Сайт магазина: ' + data.shopWebsite + '\n';
                 }
             }
             
             if (data.vk && data.type !== 'feedback') {
-                message += `🔗 VK: ${data.vk}\n`;
+                message += '🔗 VK: ' + data.vk + '\n';
             }
             
-            message += `\n📝 Сообщение:\n${data.description}\n\n`;
+            message += '\n📝 Сообщение:\n' + data.description + '\n\n';
             
             if (data.userName && data.userName !== 'Аноним') {
-                message += `👤 Отправитель: ${data.userName}\n`;
+                message += '👤 Отправитель: ' + data.userName + '\n';
             }
             
-            message += `⏰ Время отправки: ${data.timestamp}\n`;
-            message += `🔗 Страница: ${window.location.href}\n\n`;
-            message += `────────────────────────────────\n`;
-            message += `Отправьте это сообщение одним из способов:\n`;
-            message += `📧 Email: vsevolodzabaluev@yandex.ru\n`;
-            message += `👤 ВК автора: https://vk.com/vsevolod_anadyrsky`;
+            message += '⏰ Время отправки: ' + data.timestamp + '\n';
+            message += '🔗 Страница: ' + window.location.href + '\n\n';
+            message += '────────────────────────────────\n';
+            message += 'Отправьте это сообщение одним из способов:\n';
+            message += '📧 Email: vsevolodzabaluev@yandex.ru\n';
+            message += '👤 ВК автора: https://vk.com/vsevolod_anadyrsky';
             
             return message;
         }
-        
-        // === Обработка формы ===
+
+        // ============================================================
+        // ОБРАБОТКА ФОРМЫ
+        // ============================================================
+
         function initForm() {
-            const form = document.getElementById('feedbackForm');
+            var form = document.getElementById('feedbackForm');
             
             document.getElementById('suggestType').addEventListener('change', toggleConditionalFields);
             
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
-                const type = document.getElementById('suggestType').value;
+                var type = document.getElementById('suggestType').value;
                 if (!type) {
                     showNotification('Пожалуйста, выберите тип сообщения', true);
                     return;
                 }
                 
-                const formData = {
+                var formData = {
                     type: type,
                     name: document.getElementById('name').value.trim(),
                     city: document.getElementById('city').value.trim(),
@@ -367,12 +447,13 @@
                     })
                 };
                 
-                // === ДОПОЛНИТЕЛЬНЫЕ ПОЛЯ ===
+                // Дополнительные поля для клубов
                 if (type === 'club') {
                     formData.eras = document.getElementById('eras').value.trim() || 'Не указано';
                     formData.clubWebsite = document.getElementById('clubWebsite').value.trim() || 'Не указано';
                 }
                 
+                // Дополнительные поля для мероприятий
                 if (type === 'festival') {
                     formData.eventType = document.getElementById('eventType').value;
                     if (!formData.eventType) {
@@ -383,6 +464,7 @@
                     formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim() || 'Не указано';
                 }
                 
+                // Дополнительные поля для магазинов
                 if (type === 'shop') {
                     formData.specialization = document.getElementById('specialization').value.trim() || 'Не указано';
                     formData.shopEras = document.getElementById('shopEras').value.trim() || 'Не указано';
@@ -406,34 +488,26 @@
                     }
                 }
                 
-                const message = formatMessage(formData);
+                var message = formatMessage(formData);
                 
                 navigator.clipboard.writeText(message)
-                    .then(() => {
-                        showNotification('✅ Сообщение скопировано в буфер обмена! Отправьте его на email или в ВК автора.');
+                    .then(function() {
+                        showNotification('✅ Сообщение скопировано в буфер обмена! Отправьте его на email или в ВК автора.', false);
                     })
-                    .catch(() => {
+                    .catch(function() {
                         showNotification('⚠️ Не удалось скопировать автоматически. Скопируйте текст вручную.', true);
                         alert('Скопируйте этот текст и отправьте:\n\n' + message);
                     });
             });
         }
-        
-        // === Инициализация ===
+
+        // ============================================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof window.setCurrentDate === 'function') {
-                window.setCurrentDate();
-            } else {
-                const now = new Date();
-                const options = { day: 'numeric', month: 'long', year: 'numeric' };
-                const el = document.getElementById('currentDate');
-                if (el) el.textContent = now.toLocaleDateString('ru-RU', options);
-            }
-            
-            if (typeof window.loadNavigationModule === 'function') {
-                window.loadNavigationModule();
-            }
-            
+            setCurrentDate();
+            loadNavigationModule();
             initForm();
         });
     </script>
