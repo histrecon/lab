@@ -1,4 +1,4 @@
-<!-- navigation-module.html - Простой адаптивный вариант без бургера -->
+<!-- navigation-module.html - С колонками, без бургера -->
 <nav class="navigation-module" id="mainNavigation">
     <div class="nav-container">
         <!-- ЛОГОТИП -->
@@ -7,32 +7,41 @@
             <span>РеконХаб</span>
         </a>
         
-        <!-- МЕНЮ -->
+        <!-- МЕНЮ - ТРИ КОЛОНКИ -->
         <div class="nav-menu" id="navMenu">
-            <a href="index.html" class="nav-menu-item">
-                <span>📋</span>
-                <span>Главная</span>
-            </a>
-            <a href="clubs.html" class="nav-menu-item">
-                <span>🏛️</span>
-                <span>Клубы</span>
-            </a>
-            <a href="festivals.html" class="nav-menu-item">
-                <span>🎪</span>
-                <span>Мероприятия</span>
-            </a>
-            <a href="shops.html" class="nav-menu-item">
-                <span>🛒</span>
-                <span>Магазины</span>
-            </a>
-            <a href="feedback.html" class="nav-menu-item feedback-btn">
-                <span>💬</span>
-                <span>Обратная связь</span>
-            </a>
-            <label for="donateToggle" class="donate-btn">
-                <span>❤️</span>
-                <span>Донат</span>
-            </label>
+            <!-- Колонка 1: Главная + Клубы -->
+            <div class="nav-column">
+                <a href="index.html" class="nav-menu-item">
+                    <span>📋</span>
+                    <span>Главная</span>
+                </a>
+                <a href="clubs.html" class="nav-menu-item">
+                    <span>🏛️</span>
+                    <span>Клубы</span>
+                </a>
+            </div>
+            <!-- Колонка 2: Мероприятия + Магазины -->
+            <div class="nav-column">
+                <a href="festivals.html" class="nav-menu-item">
+                    <span>🎪</span>
+                    <span>Мероприятия</span>
+                </a>
+                <a href="shops.html" class="nav-menu-item">
+                    <span>🛒</span>
+                    <span>Магазины</span>
+                </a>
+            </div>
+            <!-- Колонка 3: Обратная связь + Донат -->
+            <div class="nav-column">
+                <a href="feedback.html" class="nav-menu-item feedback-btn">
+                    <span>💬</span>
+                    <span>Обратная связь</span>
+                </a>
+                <label for="donateToggle" class="donate-btn">
+                    <span>❤️</span>
+                    <span>Донат</span>
+                </label>
+            </div>
         </div>
     </div>
 </nav>
@@ -59,7 +68,7 @@
 
 <style>
     /* ============================================================
-       НАВИГАЦИЯ — ПРОСТАЯ АДАПТИВНАЯ
+       НАВИГАЦИЯ — С КОЛОНКАМИ, БЕЗ БУРГЕРА
        ============================================================ */
 
     .navigation-module {
@@ -85,10 +94,9 @@
         align-items: center;
         width: 100%;
         gap: 12px;
-        flex-wrap: wrap;
     }
 
-    /* Логотип */
+    /* ЛОГОТИП */
     .nav-logo {
         display: flex;
         flex-direction: column;
@@ -115,14 +123,22 @@
         border-color: #e6a336;
     }
 
-    /* Меню */
+    /* МЕНЮ - ТРИ КОЛОНКИ */
     .nav-menu {
         display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+        align-items: stretch;
         justify-content: flex-end;
         flex: 1;
+    }
+
+    .nav-column {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        align-items: stretch;
+        justify-content: center;
     }
 
     .nav-menu-item {
@@ -131,7 +147,7 @@
         gap: 5px;
         color: #f5ebd8;
         text-decoration: none;
-        padding: 6px 12px;
+        padding: 5px 12px;
         border-radius: 6px;
         transition: all 0.3s;
         font-weight: 400;
@@ -141,6 +157,7 @@
         cursor: pointer;
         font-family: inherit;
         white-space: nowrap;
+        justify-content: center;
     }
     .nav-menu-item:hover {
         background: rgba(230, 163, 54, 0.15);
@@ -174,13 +191,14 @@
         background: rgba(255, 50, 50, 0.12);
         border: 1px solid #ff6b6b;
         border-radius: 6px;
-        padding: 6px 12px;
+        padding: 5px 12px;
         font-weight: 400;
         font-size: 0.85rem;
         cursor: pointer;
         transition: all 0.3s;
         font-family: inherit;
         white-space: nowrap;
+        justify-content: center;
     }
     .donate-btn span:first-child { font-size: 1rem; min-width: 22px; }
     .donate-btn:hover {
@@ -291,9 +309,10 @@
             min-height: 50px;
         }
         .nav-container { gap: 8px; }
+        .nav-menu { gap: 6px; }
         .nav-menu-item, .donate-btn {
             font-size: 0.78rem;
-            padding: 5px 10px;
+            padding: 4px 10px;
         }
         .nav-menu-item span:first-child, .donate-btn span:first-child {
             font-size: 0.9rem;
@@ -308,16 +327,17 @@
         .nav-logo span:last-child { font-size: 0.6rem; }
     }
 
-    @media (max-width: 680px) {
+    @media (max-width: 700px) {
         .navigation-module {
             padding: 5px 8px;
             min-height: 44px;
         }
         .nav-container { gap: 5px; }
-        .nav-menu { gap: 4px; }
+        .nav-menu { gap: 5px; }
+        .nav-column { gap: 3px; }
         .nav-menu-item, .donate-btn {
             font-size: 0.7rem;
-            padding: 4px 8px;
+            padding: 3px 8px;
             gap: 3px;
         }
         .nav-menu-item span:first-child, .donate-btn span:first-child {
@@ -334,15 +354,16 @@
         .nav-logo span:last-child { font-size: 0.55rem; }
     }
 
-    @media (max-width: 420px) {
+    @media (max-width: 430px) {
         .navigation-module {
             padding: 4px 6px;
             min-height: 38px;
         }
         .nav-menu { gap: 3px; }
+        .nav-column { gap: 2px; }
         .nav-menu-item, .donate-btn {
             font-size: 0.6rem;
-            padding: 3px 6px;
+            padding: 2px 6px;
             gap: 2px;
             border-radius: 4px;
         }
@@ -397,6 +418,6 @@
             }
         });
 
-        console.log('✅ Навигация: простая адаптивная версия (без бургера)');
+        console.log('✅ Навигация: три колонки, без бургера');
     })();
 </script>
