@@ -33,6 +33,141 @@
     
     <!-- Подключаем общие стили -->
     <link rel="stylesheet" href="catalog-styles.css">
+    
+    <!-- Дополнительные стили для чекбокса согласия -->
+    <style>
+        /* ============================================================
+           ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ
+           ============================================================ */
+        
+        .consent-group {
+            margin-top: 10px;
+            padding: 15px 18px;
+            background: rgba(255, 248, 240, 0.6);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+        
+        .consent-group:hover {
+            background: rgba(255, 248, 240, 0.9);
+            border-color: var(--color-gold);
+        }
+        
+        .consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        /* Скрываем стандартный чекбокс */
+        .consent-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        /* Кастомный чекбокс */
+        .consent-checkmark {
+            position: relative;
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 248, 240, 0.9);
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            transition: all var(--transition);
+            margin-top: 2px;
+        }
+        
+        .consent-checkmark::after {
+            content: '';
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid var(--color-text);
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Состояние "выбрано" */
+        .consent-label input[type="checkbox"]:checked ~ .consent-checkmark {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            border-color: #c17e1a;
+        }
+        
+        .consent-label input[type="checkbox"]:checked ~ .consent-checkmark::after {
+            display: block;
+        }
+        
+        /* Ховер и фокус */
+        .consent-label:hover .consent-checkmark {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.15);
+        }
+        
+        .consent-label input[type="checkbox"]:focus ~ .consent-checkmark {
+            box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.3);
+            border-color: var(--color-gold);
+        }
+        
+        /* Ошибка валидации */
+        .consent-group.error {
+            border-color: #c33;
+            background: rgba(204, 51, 51, 0.05);
+        }
+        
+        .consent-group.error .consent-checkmark {
+            border-color: #c33;
+        }
+        
+        /* Текст соглашения */
+        .consent-text {
+            color: #5a4a3a;
+            font-size: 0.92rem;
+            line-height: 1.55;
+        }
+        
+        .consent-link {
+            color: var(--color-brown);
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+        
+        .consent-link:hover {
+            color: var(--color-gold-dark);
+        }
+        
+        @media (max-width: 480px) {
+            .consent-group {
+                padding: 12px 14px;
+            }
+            .consent-checkmark {
+                width: 22px;
+                height: 22px;
+            }
+            .consent-checkmark::after {
+                left: 6px;
+                top: 1px;
+                width: 5px;
+                height: 11px;
+            }
+            .consent-text {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="container">
@@ -64,7 +199,7 @@
                     <span class="form-hint">Выберите категорию, к которой относится ваше сообщение</span>
                 </div>
                 
-                <!-- Базовые поля -->
+                <!-- Название -->
                 <div class="form-group">
                     <label class="form-label" for="name">
                         Название <span class="required">*</span>
@@ -72,6 +207,7 @@
                     <input type="text" class="form-input" id="name" name="name" placeholder="Введите название" required>
                 </div>
                 
+                <!-- Город — теперь текстовое поле -->
                 <div class="form-group">
                     <label class="form-label" for="city">
                         Город
@@ -79,18 +215,12 @@
                     <input type="text" class="form-input" id="city" name="city" placeholder="Введите город">
                 </div>
                 
+                <!-- Страна — теперь текстовое поле -->
                 <div class="form-group">
                     <label class="form-label" for="country">
                         Страна
                     </label>
-                    <select class="form-select" id="country" name="country">
-                        <option value="">Выберите страну</option>
-                        <option value="Россия">Россия</option>
-                        <option value="Беларусь">Беларусь</option>
-                        <option value="Казахстан">Казахстан</option>
-                        <option value="Узбекистан">Узбекистан</option>
-                        <option value="другая">Другая страна</option>
-                    </select>
+                    <input type="text" class="form-input" id="country" name="country" placeholder="Введите страну">
                 </div>
                 
                 <!-- Скрытые поля для клубов -->
@@ -166,7 +296,7 @@
                     </div>
                 </div>
                 
-                <!-- Общие поля -->
+                <!-- Ссылка VK -->
                 <div class="form-group">
                     <label class="form-label" for="vk">
                         Ссылка VK <span class="required">*</span>
@@ -175,18 +305,42 @@
                     <span class="form-hint">Ссылка на страницу VK (обязательно для клуба, мероприятия или магазина)</span>
                 </div>
                 
+                <!-- Динамическое поле: Сообщение / Описание -->
                 <div class="form-group">
-                    <label class="form-label" for="description">
-                        Сообщение <span class="required">*</span>
+                    <label class="form-label" for="description" id="descriptionLabel">
+                        Сообщение или описание <span class="required">*</span>
                     </label>
-                    <textarea class="form-textarea" id="description" name="description" placeholder="Расскажите подробнее о том, что вы хотите сообщить, или напишите свои пожелания/замечания..." required></textarea>
+                    <textarea 
+                        class="form-textarea" 
+                        id="description" 
+                        name="description" 
+                        placeholder="Сначала выберите тип обращения, чтобы увидеть подходящую подсказку..." 
+                        required></textarea>
+                    <span class="form-hint" id="descriptionHint">
+                        Выберите тип обращения, чтобы увидеть подходящую подсказку
+                    </span>
                 </div>
                 
+                <!-- Имя -->
                 <div class="form-group">
                     <label class="form-label" for="userName">
                         Ваше имя (по желанию)
                     </label>
                     <input type="text" class="form-input" id="userName" name="userName" placeholder="Как к вам обращаться">
+                </div>
+                
+                <!-- ЧЕКБОКС СОГЛАСИЯ -->
+                <div class="form-group consent-group">
+                    <label class="consent-label" for="consentCheckbox">
+                        <input type="checkbox" id="consentCheckbox" name="consent" required>
+                        <span class="consent-checkmark"></span>
+                        <span class="consent-text">
+                            Я согласен(а) на обработку моих персональных данных 
+                            (имя, город, страна, контактные данные) в целях добавления информации 
+                            в Единую базу исторической реконструкции.
+                        </span>
+                    </label>
+                    <span class="form-hint">Обязательное поле — без согласия форма не отправится</span>
                 </div>
                 
                 <div class="form-buttons">
@@ -269,7 +423,6 @@
                 })
                 .catch(function(error) {
                     console.warn('Ошибка загрузки навигации:', error);
-                    // Минимальная заглушка: простая ссылка на главную
                     var miniNav = document.createElement('a');
                     miniNav.href = 'index.html';
                     miniNav.textContent = '🏠 На главную';
@@ -279,7 +432,7 @@
         }
 
         // ============================================================
-        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ
+        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ + ДИНАМИЧЕСКАЯ ПОДПИСЬ DESCRIPTION
         // ============================================================
 
         function toggleConditionalFields() {
@@ -287,6 +440,9 @@
             var clubFields = document.getElementById('clubFields');
             var festivalFields = document.getElementById('festivalFields');
             var shopFields = document.getElementById('shopFields');
+            var descriptionLabel = document.getElementById('descriptionLabel');
+            var descriptionHint = document.getElementById('descriptionHint');
+            var descriptionTextarea = document.getElementById('description');
             
             clubFields.classList.remove('active');
             festivalFields.classList.remove('active');
@@ -295,6 +451,45 @@
             if (type === 'club') clubFields.classList.add('active');
             else if (type === 'festival') festivalFields.classList.add('active');
             else if (type === 'shop') shopFields.classList.add('active');
+            
+            // Динамическая подпись и подсказка
+            if (type === 'feedback') {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Напишите ваше сообщение, пожелание или замечание...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Опишите вашу мысль как можно подробнее — это поможет быстрее обработать обращение';
+                }
+            } else if (type === 'club' || type === 'festival' || type === 'shop') {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Описание <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    if (type === 'club') {
+                        descriptionTextarea.placeholder = 'Расскажите о клубе: направления, эпохи, деятельность, особенности, контакты для связи...';
+                    } else if (type === 'festival') {
+                        descriptionTextarea.placeholder = 'Расскажите о мероприятии: формат, даты, место, программа, организаторы...';
+                    } else if (type === 'shop') {
+                        descriptionTextarea.placeholder = 'Расскажите о магазине или мастерской: что производите, материалы, сроки, доставка, контакты...';
+                    }
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Чем подробнее описание — тем быстрее информация появится в базе';
+                }
+            } else {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение или описание <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Сначала выберите тип обращения, чтобы увидеть подходящую подсказку...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Выберите тип обращения, чтобы увидеть подходящую подсказку';
+                }
+            }
         }
 
         // ============================================================
@@ -362,12 +557,14 @@
                 message += '🔗 VK: ' + data.vk + '\n';
             }
             
-            message += '\n📝 Сообщение:\n' + data.description + '\n\n';
+            var fieldLabel = (data.type === 'feedback') ? '📝 Сообщение' : '📝 Описание';
+            message += '\n' + fieldLabel + ':\n' + data.description + '\n\n';
             
             if (data.userName && data.userName !== 'Аноним') {
                 message += '👤 Отправитель: ' + data.userName + '\n';
             }
             
+            message += '✅ Согласие на обработку данных: получено\n';
             message += '⏰ Время отправки: ' + data.timestamp + '\n';
             message += '🔗 Страница: ' + window.location.href + '\n\n';
             message += '────────────────────────────────\n';
@@ -387,6 +584,17 @@
             
             document.getElementById('suggestType').addEventListener('change', toggleConditionalFields);
             
+            // Снятие ошибки с чекбокса при отметке
+            var consentCheckbox = document.getElementById('consentCheckbox');
+            if (consentCheckbox) {
+                consentCheckbox.addEventListener('change', function() {
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (this.checked && consentGroup) {
+                        consentGroup.classList.remove('error');
+                    }
+                });
+            }
+            
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
@@ -396,11 +604,23 @@
                     return;
                 }
                 
+                // Проверка согласия на обработку данных
+                if (!consentCheckbox.checked) {
+                    showNotification('Пожалуйста, подтвердите согласие на обработку персональных данных', true);
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.add('error');
+                    consentCheckbox.focus();
+                    return;
+                } else {
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.remove('error');
+                }
+                
                 var formData = {
                     type: type,
                     name: document.getElementById('name').value.trim(),
                     city: document.getElementById('city').value.trim(),
-                    country: document.getElementById('country').value,
+                    country: document.getElementById('country').value.trim(),
                     vk: document.getElementById('vk').value.trim(),
                     description: document.getElementById('description').value.trim(),
                     userName: document.getElementById('userName').value.trim() || 'Аноним',
@@ -436,7 +656,7 @@
                 
                 // Проверка обязательных полей
                 if (!formData.description) {
-                    showNotification('Пожалуйста, заполните поле "Сообщение" (отмечено *)', true);
+                    showNotification('Пожалуйста, заполните поле "Сообщение" или "Описание" (отмечено *)', true);
                     return;
                 }
                 
@@ -472,6 +692,7 @@
             setCurrentDate();
             loadNavigationModule();
             initForm();
+            toggleConditionalFields(); // Применяем нейтральную подпись при загрузке
         });
     </script>
 </body>
