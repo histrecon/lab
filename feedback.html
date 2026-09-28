@@ -34,7 +34,7 @@
     <!-- Подключаем общие стили -->
     <link rel="stylesheet" href="catalog-styles.css">
     
-    <!-- Дополнительные стили -->
+    <!-- Дополнительные стили для чекбокса согласия -->
     <style>
         /* ============================================================
            ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ
@@ -64,6 +64,7 @@
             font-weight: 400;
         }
         
+        /* Скрываем стандартный чекбокс */
         .consent-label input[type="checkbox"] {
             position: absolute;
             opacity: 0;
@@ -72,6 +73,7 @@
             width: 0;
         }
         
+        /* Кастомный чекбокс */
         .consent-checkmark {
             position: relative;
             flex-shrink: 0;
@@ -97,6 +99,7 @@
             transform: rotate(45deg);
         }
         
+        /* Состояние "выбрано" */
         .consent-label input[type="checkbox"]:checked ~ .consent-checkmark {
             background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
             border-color: #c17e1a;
@@ -106,6 +109,7 @@
             display: block;
         }
         
+        /* Ховер и фокус */
         .consent-label:hover .consent-checkmark {
             border-color: var(--color-gold);
             box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.15);
@@ -116,6 +120,7 @@
             border-color: var(--color-gold);
         }
         
+        /* Ошибка валидации */
         .consent-group.error {
             border-color: #c33;
             background: rgba(204, 51, 51, 0.05);
@@ -125,6 +130,7 @@
             border-color: #c33;
         }
         
+        /* Текст соглашения */
         .consent-text {
             color: #5a4a3a;
             font-size: 0.92rem;
@@ -159,81 +165,6 @@
             .consent-text {
                 font-size: 0.85rem;
                 line-height: 1.5;
-            }
-        }
-        
-        /* ============================================================
-           КНОПКИ ОТПРАВКИ VK / EMAIL
-           ============================================================ */
-        
-        .send-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 30px;
-        }
-        
-        .send-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 16px 20px;
-            border-radius: var(--radius);
-            font-weight: 700;
-            font-size: 1.05rem;
-            cursor: pointer;
-            border: 2px solid;
-            transition: all var(--transition);
-            font-family: inherit;
-        }
-        
-        .send-btn span:first-child {
-            font-size: 1.25rem;
-        }
-        
-        .vk-send-btn {
-            background: linear-gradient(135deg, #4a76a8, #3a5f8a);
-            color: #fff;
-            border-color: #2d4d70;
-        }
-        
-        .vk-send-btn:hover {
-            background: linear-gradient(135deg, #3a5f8a, #2d4d70);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(74, 118, 168, 0.4);
-        }
-        
-        .email-send-btn {
-            background: linear-gradient(135deg, #36aee6, #1c6dd1);
-            color: #fff;
-            border-color: #1a5cc1;
-        }
-        
-        .email-send-btn:hover {
-            background: linear-gradient(135deg, #1c6dd1, #1a5cb8);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(28, 109, 209, 0.4);
-        }
-        
-        .cancel-row {
-            margin-top: 12px;
-            display: flex;
-            justify-content: center;
-        }
-        
-        .cancel-row .cancel-button {
-            padding: 10px 40px;
-            font-size: 1rem;
-        }
-        
-        @media (max-width: 600px) {
-            .send-buttons {
-                grid-template-columns: 1fr;
-            }
-            .send-btn {
-                padding: 14px 16px;
-                font-size: 1rem;
             }
         }
     </style>
@@ -276,7 +207,7 @@
                     <input type="text" class="form-input" id="name" name="name" placeholder="Введите название" required>
                 </div>
                 
-                <!-- Город -->
+                <!-- Город — теперь текстовое поле -->
                 <div class="form-group">
                     <label class="form-label" for="city">
                         Город
@@ -284,7 +215,7 @@
                     <input type="text" class="form-input" id="city" name="city" placeholder="Введите город">
                 </div>
                 
-                <!-- Страна -->
+                <!-- Страна — теперь текстовое поле -->
                 <div class="form-group">
                     <label class="form-label" for="country">
                         Страна
@@ -406,30 +337,29 @@
                         <span class="consent-text">
                             Я согласен(а) на обработку моих персональных данных 
                             (имя, город, страна, контактные данные) в целях добавления информации 
-                            в Единую базу исторической реконструкции.
+                            в Единую базу исторической реконструкции — РеконХаб.
                         </span>
                     </label>
                     <span class="form-hint">Обязательное поле — без согласия форма не отправится</span>
                 </div>
                 
-                <!-- КНОПКИ ОТПРАВКИ -->
-                <div class="send-buttons">
-                    <button type="button" id="sendVkBtn" class="send-btn vk-send-btn">
-                        <span>💬</span>
-                        <span>Отправить в VK</span>
-                    </button>
-                    <button type="button" id="sendEmailBtn" class="send-btn email-send-btn">
-                        <span>📧</span>
-                        <span>Отправить на Email</span>
-                    </button>
-                </div>
-                
-                <div class="cancel-row">
+                <div class="form-buttons">
+                    <button type="submit" class="submit-button">📋 Скопировать сообщение</button>
                     <a href="index.html" class="cancel-button">Отмена</a>
                 </div>
                 
                 <div class="form-note">
-                    <p>При нажатии откроется выбранное приложение с уже готовым текстом сообщения. Просто нажмите «Отправить».</p>
+                    <p>Сообщение будет скопировано в буфер обмена. Отправьте его одним из способов:</p>
+                    <div class="contact-links">
+                        <a href="mailto:ReconHub@yandex.ru?subject=Обратная%20связь%20РеконХаб" class="contact-link email">
+                            <span>📧</span>
+                            <span>Email: ReconHub@yandex.ru</span>
+                        </a>
+                        <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="contact-link">
+                            <span>👤</span>
+                            <span>ВК автора</span>
+                        </a>
+                    </div>
                 </div>
             </form>
         </div>
@@ -502,7 +432,7 @@
         }
 
         // ============================================================
-        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ + ДИНАМИЧЕСКАЯ ПОДПИСЬ
+        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ + ДИНАМИЧЕСКАЯ ПОДПИСЬ DESCRIPTION
         // ============================================================
 
         function toggleConditionalFields() {
@@ -524,11 +454,19 @@
             
             // Динамическая подпись и подсказка
             if (type === 'feedback') {
-                if (descriptionLabel) descriptionLabel.innerHTML = 'Сообщение <span class="required">*</span>';
-                if (descriptionTextarea) descriptionTextarea.placeholder = 'Напишите ваше сообщение, пожелание или замечание...';
-                if (descriptionHint) descriptionHint.textContent = 'Опишите вашу мысль как можно подробнее — это поможет быстрее обработать обращение';
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Напишите ваше сообщение, пожелание или замечание...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Опишите вашу мысль как можно подробнее — это поможет быстрее обработать обращение';
+                }
             } else if (type === 'club' || type === 'festival' || type === 'shop') {
-                if (descriptionLabel) descriptionLabel.innerHTML = 'Описание <span class="required">*</span>';
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Описание <span class="required">*</span>';
+                }
                 if (descriptionTextarea) {
                     if (type === 'club') {
                         descriptionTextarea.placeholder = 'Расскажите о клубе: направления, эпохи, деятельность, особенности, контакты для связи...';
@@ -538,11 +476,19 @@
                         descriptionTextarea.placeholder = 'Расскажите о магазине или мастерской: что производите, материалы, сроки, доставка, контакты...';
                     }
                 }
-                if (descriptionHint) descriptionHint.textContent = 'Чем подробнее описание — тем быстрее информация появится в базе';
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Чем подробнее описание — тем быстрее информация появится в базе';
+                }
             } else {
-                if (descriptionLabel) descriptionLabel.innerHTML = 'Сообщение или описание <span class="required">*</span>';
-                if (descriptionTextarea) descriptionTextarea.placeholder = 'Сначала выберите тип обращения, чтобы увидеть подходящую подсказку...';
-                if (descriptionHint) descriptionHint.textContent = 'Выберите тип обращения, чтобы увидеть подходящую подсказку';
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение или описание <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Сначала выберите тип обращения, чтобы увидеть подходящую подсказку...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Выберите тип обращения, чтобы увидеть подходящую подсказку';
+                }
             }
         }
 
@@ -565,8 +511,13 @@
                 message += '🏷 Название: ' + data.name + '\n';
             }
             
-            if (data.city) message += '📍 Город: ' + data.city + '\n';
-            if (data.country) message += '🌍 Страна: ' + data.country + '\n';
+            if (data.city) {
+                message += '📍 Город: ' + data.city + '\n';
+            }
+            
+            if (data.country) {
+                message += '🌍 Страна: ' + data.country + '\n';
+            }
             
             if (data.type === 'club' && data.eras) {
                 message += '📅 Исторические эпохи: ' + data.eras + '\n';
@@ -615,161 +566,22 @@
             
             message += '✅ Согласие на обработку данных: получено\n';
             message += '⏰ Время отправки: ' + data.timestamp + '\n';
-            message += '🔗 Страница: ' + window.location.href + '\n';
+            message += '🔗 Страница: ' + window.location.href + '\n\n';
+            message += '────────────────────────────────\n';
+            message += 'Отправьте это сообщение одним из способов:\n';
+            message += '📧 Email: ReconHub@yandex.ru\n';
+            message += '👤 ВК автора: https://vk.com/vsevolod_anadyrsky';
             
             return message;
         }
 
         // ============================================================
-        // СБОР ДАННЫХ ФОРМЫ
-        // ============================================================
-
-        function collectFormData() {
-            var type = document.getElementById('suggestType').value;
-            if (!type) {
-                showNotification('Пожалуйста, выберите тип сообщения', true);
-                return null;
-            }
-            
-            // Проверка согласия
-            var consentCheckbox = document.getElementById('consentCheckbox');
-            if (!consentCheckbox.checked) {
-                showNotification('Пожалуйста, подтвердите согласие на обработку персональных данных', true);
-                var consentGroup = document.querySelector('.consent-group');
-                if (consentGroup) consentGroup.classList.add('error');
-                consentCheckbox.focus();
-                return null;
-            } else {
-                var consentGroup = document.querySelector('.consent-group');
-                if (consentGroup) consentGroup.classList.remove('error');
-            }
-            
-            var formData = {
-                type: type,
-                name: document.getElementById('name').value.trim(),
-                city: document.getElementById('city').value.trim(),
-                country: document.getElementById('country').value.trim(),
-                vk: document.getElementById('vk').value.trim(),
-                description: document.getElementById('description').value.trim(),
-                userName: document.getElementById('userName').value.trim() || 'Аноним',
-                timestamp: new Date().toLocaleString('ru-RU', { 
-                    day: 'numeric', month: 'long', year: 'numeric',
-                    hour: '2-digit', minute: '2-digit'
-                })
-            };
-            
-            // Проверка описания
-            if (!formData.description) {
-                showNotification('Пожалуйста, заполните поле "Сообщение" или "Описание"', true);
-                return null;
-            }
-            
-            // Дополнительные поля для клубов
-            if (type === 'club') {
-                formData.eras = document.getElementById('eras').value.trim() || 'Не указано';
-                formData.clubWebsite = document.getElementById('clubWebsite').value.trim() || 'Не указано';
-            }
-            
-            // Дополнительные поля для мероприятий
-            if (type === 'festival') {
-                formData.eventType = document.getElementById('eventType').value;
-                if (!formData.eventType) {
-                    showNotification('Пожалуйста, выберите тип мероприятия', true);
-                    return null;
-                }
-                formData.festivalEras = document.getElementById('festivalEras').value.trim() || 'Не указано';
-                formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim() || 'Не указано';
-            }
-            
-            // Дополнительные поля для магазинов
-            if (type === 'shop') {
-                formData.specialization = document.getElementById('specialization').value.trim() || 'Не указано';
-                formData.shopEras = document.getElementById('shopEras').value.trim() || 'Не указано';
-                formData.shopWebsite = document.getElementById('shopWebsite').value.trim() || 'Не указано';
-            }
-            
-            // Проверка обязательных полей для анкет
-            if (type === 'club' || type === 'festival' || type === 'shop') {
-                if (!formData.name) {
-                    showNotification('Пожалуйста, заполните поле "Название"', true);
-                    return null;
-                }
-                if (!formData.vk) {
-                    showNotification('Пожалуйста, заполните поле "Ссылка VK"', true);
-                    return null;
-                }
-            }
-            
-            return formData;
-        }
-
-        // ============================================================
-        // ОТПРАВКА В VK
-        // ============================================================
-
-        function sendToVK() {
-            var data = collectFormData();
-            if (!data) return;
-            
-            var message = formatMessage(data);
-            
-            // VK имеет лимит на длину текста в ссылке ~2000 символов
-            var maxLen = 1900;
-            
-            if (message.length > maxLen) {
-                // Сохраняем полную версию в буфер обмена
-                navigator.clipboard.writeText(message).catch(function() {});
-                
-                // Обрезаем для VK
-                var shortMessage = message.substring(0, maxLen) + 
-                    '\n\n⚠️ [Текст сокращён. Полная версия скопирована в буфер обмена — вставьте её после открытия VK (Ctrl+V)]';
-                
-                var vkUrl = 'https://vk.com/vsevolod_anadyrsky?ref=' + encodeURIComponent(shortMessage);
-                window.open(vkUrl, '_blank');
-                
-                showNotification('⚠️ Текст длинный — сокращённая версия открыта в VK. Полная скопирована в буфер (вставьте Ctrl+V)', false);
-            } else {
-                var vkUrl = 'https://vk.com/vsevolod_anadyrsky?ref=' + encodeURIComponent(message);
-                window.open(vkUrl, '_blank');
-                showNotification('✅ Открываем VK с готовым сообщением...', false);
-            }
-        }
-
-        // ============================================================
-        // ОТПРАВКА НА EMAIL
-        // ============================================================
-
-        function sendToEmail() {
-            var data = collectFormData();
-            if (!data) return;
-            
-            var message = formatMessage(data);
-            var subject = 'Обратная связь РеконХаб — ' + (data.name || data.type);
-            
-            var mailtoUrl = 'mailto:ReconHub@yandex.ru'
-                + '?subject=' + encodeURIComponent(subject)
-                + '&body=' + encodeURIComponent(message);
-            
-            // Проверка длины URL (браузеры имеют лимит ~8000 символов)
-            if (mailtoUrl.length > 7500) {
-                // Сохраняем в буфер и предлагаем вручную
-                navigator.clipboard.writeText(message).then(function() {
-                    showNotification('⚠️ Текст слишком длинный для почтовой ссылки. Скопирован в буфер — вставьте вручную в письмо.', true);
-                }).catch(function() {
-                    showNotification('⚠️ Текст слишком длинный. Скопируйте его вручную.', true);
-                });
-                return;
-            }
-            
-            window.location.href = mailtoUrl;
-            showNotification('✅ Открываем почтовый клиент с готовым сообщением...', false);
-        }
-
-        // ============================================================
-        // ИНИЦИАЛИЗАЦИЯ ФОРМЫ
+        // ОБРАБОТКА ФОРМЫ
         // ============================================================
 
         function initForm() {
+            var form = document.getElementById('feedbackForm');
+            
             document.getElementById('suggestType').addEventListener('change', toggleConditionalFields);
             
             // Снятие ошибки с чекбокса при отметке
@@ -783,12 +595,93 @@
                 });
             }
             
-            // Кнопки отправки
-            var sendVkBtn = document.getElementById('sendVkBtn');
-            var sendEmailBtn = document.getElementById('sendEmailBtn');
-            
-            if (sendVkBtn) sendVkBtn.addEventListener('click', sendToVK);
-            if (sendEmailBtn) sendEmailBtn.addEventListener('click', sendToEmail);
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                var type = document.getElementById('suggestType').value;
+                if (!type) {
+                    showNotification('Пожалуйста, выберите тип сообщения', true);
+                    return;
+                }
+                
+                // Проверка согласия на обработку данных
+                if (!consentCheckbox.checked) {
+                    showNotification('Пожалуйста, подтвердите согласие на обработку персональных данных', true);
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.add('error');
+                    consentCheckbox.focus();
+                    return;
+                } else {
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.remove('error');
+                }
+                
+                var formData = {
+                    type: type,
+                    name: document.getElementById('name').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    country: document.getElementById('country').value.trim(),
+                    vk: document.getElementById('vk').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    userName: document.getElementById('userName').value.trim() || 'Аноним',
+                    timestamp: new Date().toLocaleString('ru-RU', { 
+                        day: 'numeric', month: 'long', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    })
+                };
+                
+                // Дополнительные поля для клубов
+                if (type === 'club') {
+                    formData.eras = document.getElementById('eras').value.trim() || 'Не указано';
+                    formData.clubWebsite = document.getElementById('clubWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для мероприятий
+                if (type === 'festival') {
+                    formData.eventType = document.getElementById('eventType').value;
+                    if (!formData.eventType) {
+                        showNotification('Пожалуйста, выберите тип мероприятия', true);
+                        return;
+                    }
+                    formData.festivalEras = document.getElementById('festivalEras').value.trim() || 'Не указано';
+                    formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для магазинов
+                if (type === 'shop') {
+                    formData.specialization = document.getElementById('specialization').value.trim() || 'Не указано';
+                    formData.shopEras = document.getElementById('shopEras').value.trim() || 'Не указано';
+                    formData.shopWebsite = document.getElementById('shopWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Проверка обязательных полей
+                if (!formData.description) {
+                    showNotification('Пожалуйста, заполните поле "Сообщение" или "Описание" (отмечено *)', true);
+                    return;
+                }
+                
+                if (type === 'club' || type === 'festival' || type === 'shop') {
+                    if (!formData.name) {
+                        showNotification('Пожалуйста, заполните поле "Название" (отмечено *)', true);
+                        return;
+                    }
+                    if (!formData.vk) {
+                        showNotification('Пожалуйста, заполните поле "Ссылка VK" (отмечено *)', true);
+                        return;
+                    }
+                }
+                
+                var message = formatMessage(formData);
+                
+                navigator.clipboard.writeText(message)
+                    .then(function() {
+                        showNotification('✅ Сообщение скопировано в буфер обмена! Отправьте его на email или в ВК автора.', false);
+                    })
+                    .catch(function() {
+                        showNotification('⚠️ Не удалось скопировать автоматически. Скопируйте текст вручную.', true);
+                        alert('Скопируйте этот текст и отправьте:\n\n' + message);
+                    });
+            });
         }
 
         // ============================================================
@@ -799,7 +692,7 @@
             setCurrentDate();
             loadNavigationModule();
             initForm();
-            toggleConditionalFields();
+            toggleConditionalFields(); // Применяем нейтральную подпись при загрузке
         });
     </script>
 </body>
