@@ -1,4 +1,4 @@
-<!-- navigation-module.html - С колонками, без бургера, с крупным логотипом -->
+<!-- navigation-module.html - С колонками, без бургера, с крупным логотипом 82px -->
 <nav class="navigation-module" id="mainNavigation">
     <div class="nav-container">
         <!-- ЛОГОТИП -->
@@ -68,7 +68,8 @@
 <style>
     /* ============================================================
        НАВИГАЦИЯ — С КОЛОНКАМИ, БЕЗ БУРГЕРА, С КРУПНЫМ ЛОГОТИПОМ
-       Логотип по высоте сопоставим двум строкам меню (~72px)
+       Логотип: 82px на десктопе, пропорционально уменьшается
+       Облачко панели: НЕ меняется (min-height сохранён)
        ============================================================ */
 
     .navigation-module {
@@ -79,9 +80,9 @@
         background: rgba(30, 20, 10, 0.95);
         border-bottom: 2px solid #d4a574;
         z-index: 999;
-        padding: 10px 15px;
+        padding: 4px 15px;             /* было 10px — компенсируем рост логотипа */
         box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
-        min-height: 84px; /* увеличено под крупный логотип */
+        min-height: 84px;              /* «облачко» остаётся прежним */
         display: flex;
         align-items: center;
     }
@@ -97,7 +98,7 @@
     }
 
     /* ============================================================
-       ЛОГОТИП — КРУПНЫЙ, ПО ВЫСОТЕ КАК ДВЕ КНОПКИ МЕНЮ
+       ЛОГОТИП — КРУПНЫЙ, 82px НА ДЕСКТОПЕ
        ============================================================ */
 
     .nav-logo {
@@ -111,7 +112,7 @@
         border: none;
         transition: all 0.3s ease;
         flex-shrink: 0;
-        height: 72px; /* высота ~ двум строкам меню */
+        height: 82px;                  /* было 72px */
         overflow: visible;
     }
 
@@ -313,12 +314,14 @@
 
     /* ============================================================
        АДАПТИВНОСТЬ
+       Логотип уменьшается пропорционально, облачко — нет
        ============================================================ */
 
+    /* Планшеты: до 992px — логотип 70px */
     @media (max-width: 992px) {
         .navigation-module {
-            padding: 8px 12px;
-            min-height: 74px;
+            padding: 3px 12px;
+            min-height: 76px;
         }
         .nav-container { gap: 12px; }
         .nav-menu { gap: 8px; }
@@ -330,13 +333,14 @@
             font-size: 0.95rem;
             min-width: 20px;
         }
-        .nav-logo { height: 62px; }
+        .nav-logo { height: 70px; }
     }
 
+    /* Большие телефоны / маленькие планшеты: до 700px — логотип 58px */
     @media (max-width: 700px) {
         .navigation-module {
-            padding: 6px 8px;
-            min-height: 62px;
+            padding: 2px 8px;
+            min-height: 64px;
         }
         .nav-container { gap: 6px; }
         .nav-menu { gap: 5px; }
@@ -350,13 +354,14 @@
             font-size: 0.85rem;
             min-width: 18px;
         }
-        .nav-logo { height: 52px; }
+        .nav-logo { height: 58px; }
     }
 
+    /* Телефоны: до 430px — логотип 48px */
     @media (max-width: 430px) {
         .navigation-module {
-            padding: 5px 6px;
-            min-height: 52px;
+            padding: 2px 6px;
+            min-height: 54px;
         }
         .nav-menu { gap: 3px; }
         .nav-column { gap: 2px; }
@@ -370,8 +375,21 @@
             font-size: 0.75rem;
             min-width: 16px;
         }
-        .nav-logo { height: 44px; }
+        .nav-logo { height: 48px; }
         .donate-modal-content { padding: 20px; }
+    }
+
+    /* Очень маленькие телефоны: до 360px — логотип 42px */
+    @media (max-width: 360px) {
+        .navigation-module {
+            padding: 1px 4px;
+            min-height: 48px;
+        }
+        .nav-menu-item, .donate-btn {
+            font-size: 0.58rem;
+            padding: 2px 6px;
+        }
+        .nav-logo { height: 42px; }
     }
 </style>
 
@@ -409,6 +427,6 @@
             }
         });
 
-        console.log('✅ Навигация: три колонки, крупный логотип (72px), без бургера');
+        console.log('✅ Навигация: логотип 82px (десктоп), адаптивный, без бургера');
     })();
 </script>
