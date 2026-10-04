@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратная связь | РеконХаб</title>
+    <meta name="description" content="Свяжитесь с разработчиком, предложите добавить или отредактировать информацию о клубе, мероприятии или магазине в Единой базе исторической реконструкции.">
+    <meta name="keywords" content="обратная связь, связаться с разработчиком РеконХаб, добавить клуб, добавить мероприятие">
+    <link rel="canonical" href="https://reconhub.ru/feedback.html">
+    
+    <!-- ===== OPEN GRAPH ===== -->
+    <meta property="og:title" content="Обратная связь | РеконХаб">
+    <meta property="og:description" content="Свяжитесь с разработчиком, предложите добавить информацию в Единую базу исторической реконструкции.">
+    <meta property="og:url" content="https://reconhub.ru/feedback.html">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="https://reconhub.ru/images/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="РеконХаб">
+    <meta property="og:locale" content="ru_RU">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Обратная связь | РеконХаб">
+    <meta name="twitter:description" content="Свяжитесь с разработчиком, предложите добавить информацию в базу исторической реконструкции.">
+    <meta name="twitter:image" content="https://reconhub.ru/images/og-image.jpg">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo-icon.png">
+    <link rel="apple-touch-icon" href="logo-icon.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Подключаем общие стили -->
+    <link rel="stylesheet" href="catalog-styles.css">
+    
+    <!-- Дополнительные стили для чекбокса согласия -->
+    <style>
+        /* ============================================================
+           ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ
+           ============================================================ */
+        
+        .consent-group {
+            margin-top: 10px;
+            padding: 15px 18px;
+            background: rgba(255, 248, 240, 0.6);
+            border: 2px dashed var(--color-border);
+            border-radius: var(--radius);
+            transition: all var(--transition);
+        }
+        
+        .consent-group:hover {
+            background: rgba(255, 248, 240, 0.9);
+            border-color: var(--color-gold);
+        }
+        
+        .consent-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            cursor: pointer;
+            user-select: none;
+            margin: 0;
+            font-weight: 400;
+        }
+        
+        /* Скрываем стандартный чекбокс */
+        .consent-label input[type="checkbox"] {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+        
+        /* Кастомный чекбокс */
+        .consent-checkmark {
+            position: relative;
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 248, 240, 0.9);
+            border: 2px solid var(--color-border);
+            border-radius: 6px;
+            transition: all var(--transition);
+            margin-top: 2px;
+        }
+        
+        .consent-checkmark::after {
+            content: '';
+            position: absolute;
+            display: none;
+            left: 7px;
+            top: 2px;
+            width: 6px;
+            height: 12px;
+            border: solid var(--color-text);
+            border-width: 0 3px 3px 0;
+            transform: rotate(45deg);
+        }
+        
+        /* Состояние "выбрано" */
+        .consent-label input[type="checkbox"]:checked ~ .consent-checkmark {
+            background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+            border-color: #c17e1a;
+        }
+        
+        .consent-label input[type="checkbox"]:checked ~ .consent-checkmark::after {
+            display: block;
+        }
+        
+        /* Ховер и фокус */
+        .consent-label:hover .consent-checkmark {
+            border-color: var(--color-gold);
+            box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.15);
+        }
+        
+        .consent-label input[type="checkbox"]:focus ~ .consent-checkmark {
+            box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.3);
+            border-color: var(--color-gold);
+        }
+        
+        /* Ошибка валидации */
+        .consent-group.error {
+            border-color: #c33;
+            background: rgba(204, 51, 51, 0.05);
+        }
+        
+        .consent-group.error .consent-checkmark {
+            border-color: #c33;
+        }
+        
+        /* Текст соглашения */
+        .consent-text {
+            color: #5a4a3a;
+            font-size: 0.92rem;
+            line-height: 1.55;
+        }
+        
+        .consent-link {
+            color: var(--color-brown);
+            text-decoration: underline;
+            font-weight: 600;
+            transition: color var(--transition);
+        }
+        
+        .consent-link:hover {
+            color: var(--color-gold-dark);
+        }
+        
+        @media (max-width: 480px) {
+            .consent-group {
+                padding: 12px 14px;
+            }
+            .consent-checkmark {
+                width: 22px;
+                height: 22px;
+            }
+            .consent-checkmark::after {
+                left: 6px;
+                top: 1px;
+                width: 5px;
+                height: 11px;
+            }
+            .consent-text {
+                font-size: 0.85rem;
+                line-height: 1.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Навигация загружается через JS -->
+        
+        <div class="feedback-card">
+            <div class="feedback-header">
+                <span class="feedback-icon">💬</span>
+                <h1 class="feedback-title">Обратная связь</h1>
+                <p class="feedback-subtitle">
+                    Заполните форму, чтобы предложить добавить или отредактировать информацию
+                    о клубе, мероприятии или магазине в нашей базе данных, либо просто свяжитесь с разработчиком.
+                </p>
+            </div>
+            
+            <form id="feedbackForm">
+                <!-- Тип обращения -->
+                <div class="form-group">
+                    <label class="form-label" for="suggestType">
+                        Что вы хотите сообщить? <span class="required">*</span>
+                    </label>
+                    <select class="form-select" id="suggestType" name="suggestType" required>
+                        <option value="">Выберите тип</option>
+                        <option value="club">🏛 Клуб</option>
+                        <option value="festival">🎪 Мероприятие</option>
+                        <option value="shop">🛒 Магазин</option>
+                        <option value="feedback">💬 Обратная связь</option>
+                    </select>
+                    <span class="form-hint">Выберите категорию, к которой относится ваше сообщение</span>
+                </div>
+                
+                <!-- Название -->
+                <div class="form-group">
+                    <label class="form-label" for="name">
+                        Название <span class="required">*</span>
+                    </label>
+                    <input type="text" class="form-input" id="name" name="name" placeholder="Введите название" required>
+                </div>
+                
+                <!-- Город — теперь текстовое поле -->
+                <div class="form-group">
+                    <label class="form-label" for="city">
+                        Город
+                    </label>
+                    <input type="text" class="form-input" id="city" name="city" placeholder="Введите город">
+                </div>
+                
+                <!-- Страна — теперь текстовое поле -->
+                <div class="form-group">
+                    <label class="form-label" for="country">
+                        Страна
+                    </label>
+                    <input type="text" class="form-input" id="country" name="country" placeholder="Введите страну">
+                </div>
+                
+                <!-- Скрытые поля для клубов -->
+                <div id="clubFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="eras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="eras" name="eras" placeholder="Например: IX в., X в., Средневековье">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="clubWebsite">
+                            Сайт клуба
+                        </label>
+                        <input type="url" class="form-input" id="clubWebsite" name="clubWebsite" placeholder="https://club-site.ru">
+                        <span class="form-hint">Укажите ссылку на официальный сайт клуба (если есть)</span>
+                    </div>
+                </div>
+                
+                <!-- Скрытые поля для мероприятий -->
+                <div id="festivalFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="eventType">
+                            Тип мероприятия <span class="required">*</span>
+                        </label>
+                        <select class="form-select" id="eventType" name="eventType">
+                            <option value="">Выберите тип мероприятия</option>
+                            <option value="фестиваль">🎪 Фестиваль</option>
+                            <option value="турнир">⚔️ Турнир</option>
+                            <option value="иное">📌 Иное</option>
+                        </select>
+                        <span class="form-hint">Укажите, к какому типу относится мероприятие</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="festivalEras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="festivalEras" name="festivalEras" placeholder="Например: IX в., X в., Средневековье">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="festivalWebsite">
+                            Сайт мероприятия
+                        </label>
+                        <input type="url" class="form-input" id="festivalWebsite" name="festivalWebsite" placeholder="https://festival-site.ru">
+                        <span class="form-hint">Укажите ссылку на официальный сайт мероприятия (если есть)</span>
+                    </div>
+                </div>
+                
+                <!-- Скрытые поля для магазинов -->
+                <div id="shopFields" class="conditional-fields">
+                    <div class="form-group">
+                        <label class="form-label" for="specialization">
+                            Специализация
+                        </label>
+                        <input type="text" class="form-input" id="specialization" name="specialization" placeholder="Например: доспехи, оружие, текстиль">
+                        <span class="form-hint">Укажите специализацию через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="shopEras">
+                            Исторические эпохи
+                        </label>
+                        <input type="text" class="form-input" id="shopEras" name="shopEras" placeholder="Например: Средневековье, XIII в.">
+                        <span class="form-hint">Укажите эпохи через запятую</span>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="shopWebsite">
+                            Сайт магазина
+                        </label>
+                        <input type="url" class="form-input" id="shopWebsite" name="shopWebsite" placeholder="https://shop-site.ru">
+                        <span class="form-hint">Укажите ссылку на сайт магазина или мастерской</span>
+                    </div>
+                </div>
+                
+                <!-- Ссылка VK -->
+                <div class="form-group">
+                    <label class="form-label" for="vk">
+                        Ссылка VK <span class="required">*</span>
+                    </label>
+                    <input type="url" class="form-input" id="vk" name="vk" placeholder="https://vk.com/...">
+                    <span class="form-hint">Ссылка на страницу VK (обязательно для клуба, мероприятия или магазина)</span>
+                </div>
+                
+                <!-- Динамическое поле: Сообщение / Описание -->
+                <div class="form-group">
+                    <label class="form-label" for="description" id="descriptionLabel">
+                        Сообщение или описание <span class="required">*</span>
+                    </label>
+                    <textarea 
+                        class="form-textarea" 
+                        id="description" 
+                        name="description" 
+                        placeholder="Сначала выберите тип обращения, чтобы увидеть подходящую подсказку..." 
+                        required></textarea>
+                    <span class="form-hint" id="descriptionHint">
+                        Выберите тип обращения, чтобы увидеть подходящую подсказку
+                    </span>
+                </div>
+                
+                <!-- Имя -->
+                <div class="form-group">
+                    <label class="form-label" for="userName">
+                        Ваше имя (по желанию)
+                    </label>
+                    <input type="text" class="form-input" id="userName" name="userName" placeholder="Как к вам обращаться">
+                </div>
+                
+                <!-- ЧЕКБОКС СОГЛАСИЯ -->
+                <div class="form-group consent-group">
+                    <label class="consent-label" for="consentCheckbox">
+                        <input type="checkbox" id="consentCheckbox" name="consent" required>
+                        <span class="consent-checkmark"></span>
+                        <span class="consent-text">
+                            Я согласен(а) на обработку моих персональных данных 
+                            (имя, город, страна, контактные данные) в целях добавления информации 
+                            в Единую базу исторической реконструкции — РеконХаб.
+                        </span>
+                    </label>
+                    <span class="form-hint">Обязательное поле — без согласия форма не отправится</span>
+                </div>
+                
+                <div class="form-buttons">
+                    <button type="submit" class="submit-button">📋 Скопировать сообщение</button>
+                    <a href="index.html" class="cancel-button">Отмена</a>
+                </div>
+                
+                <div class="form-note">
+                    <p>Сообщение будет скопировано в буфер обмена. Отправьте его одним из способов:</p>
+                    <div class="contact-links">
+                        <a href="mailto:ReconHub@yandex.ru?subject=Обратная%20связь%20РеконХаб" class="contact-link email">
+                            <span>📧</span>
+                            <span>Email: ReconHub@yandex.ru</span>
+                        </a>
+                        <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="contact-link">
+                            <span>👤</span>
+                            <span>ВК автора</span>
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>Данные обновлены: <span id="currentDate"></span></p>
+            <div class="footer-notice">
+                ⚠️ Данный сайт является неофициальным общественным проектом и не связан с государственными информационными системами.
+            </div>
+            <div class="author-links">
+                <a href="https://vk.com/vsevolod_anadyrsky" target="_blank" class="author-link">Автор: Всеволод Забалуев</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // ============================================================
+        // УТИЛИТЫ
+        // ============================================================
+
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { day: 'numeric', month: 'long', year: 'numeric' };
+            const formattedDate = now.toLocaleDateString('ru-RU', options);
+            const el = document.getElementById('currentDate');
+            if (el) el.textContent = formattedDate;
+        }
+
+        function showNotification(text, isError) {
+            const existing = document.querySelector('.notification');
+            if (existing) existing.remove();
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification' + (isError ? ' error' : '');
+            notification.textContent = text;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 6000);
+        }
+
+        // ============================================================
+        // ЗАГРУЗКА НАВИГАЦИИ
+        // ============================================================
+
+        function loadNavigationModule() {
+            if (document.getElementById('mainNavigation')) {
+                return Promise.resolve();
+            }
+
+            return fetch('navigation-module.html')
+                .then(function(response) {
+                    if (!response.ok) throw new Error('Не удалось загрузить модуль навигации');
+                    return response.text();
+                })
+                .then(function(html) {
+                    document.body.insertAdjacentHTML('afterbegin', html);
+                    console.log('✅ Навигация загружена в feedback.html');
+                })
+                .catch(function(error) {
+                    console.warn('Ошибка загрузки навигации:', error);
+                    var miniNav = document.createElement('a');
+                    miniNav.href = 'index.html';
+                    miniNav.textContent = '🏠 На главную';
+                    miniNav.style.cssText = 'position:fixed;top:10px;left:10px;z-index:999;color:#e6a336;background:rgba(30,20,10,0.95);padding:8px 14px;border:1px solid #d4a574;border-radius:6px;text-decoration:none;font-weight:600;font-size:0.9rem;';
+                    document.body.insertAdjacentElement('afterbegin', miniNav);
+                });
+        }
+
+        // ============================================================
+        // ПОКАЗ / СКРЫТИЕ ПОЛЕЙ + ДИНАМИЧЕСКАЯ ПОДПИСЬ DESCRIPTION
+        // ============================================================
+
+        function toggleConditionalFields() {
+            var type = document.getElementById('suggestType').value;
+            var clubFields = document.getElementById('clubFields');
+            var festivalFields = document.getElementById('festivalFields');
+            var shopFields = document.getElementById('shopFields');
+            var descriptionLabel = document.getElementById('descriptionLabel');
+            var descriptionHint = document.getElementById('descriptionHint');
+            var descriptionTextarea = document.getElementById('description');
+            
+            clubFields.classList.remove('active');
+            festivalFields.classList.remove('active');
+            shopFields.classList.remove('active');
+            
+            if (type === 'club') clubFields.classList.add('active');
+            else if (type === 'festival') festivalFields.classList.add('active');
+            else if (type === 'shop') shopFields.classList.add('active');
+            
+            // Динамическая подпись и подсказка
+            if (type === 'feedback') {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Напишите ваше сообщение, пожелание или замечание...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Опишите вашу мысль как можно подробнее — это поможет быстрее обработать обращение';
+                }
+            } else if (type === 'club' || type === 'festival' || type === 'shop') {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Описание <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    if (type === 'club') {
+                        descriptionTextarea.placeholder = 'Расскажите о клубе: направления, эпохи, деятельность, особенности, контакты для связи...';
+                    } else if (type === 'festival') {
+                        descriptionTextarea.placeholder = 'Расскажите о мероприятии: формат, даты, место, программа, организаторы...';
+                    } else if (type === 'shop') {
+                        descriptionTextarea.placeholder = 'Расскажите о магазине или мастерской: что производите, материалы, сроки, доставка, контакты...';
+                    }
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Чем подробнее описание — тем быстрее информация появится в базе';
+                }
+            } else {
+                if (descriptionLabel) {
+                    descriptionLabel.innerHTML = 'Сообщение или описание <span class="required">*</span>';
+                }
+                if (descriptionTextarea) {
+                    descriptionTextarea.placeholder = 'Сначала выберите тип обращения, чтобы увидеть подходящую подсказку...';
+                }
+                if (descriptionHint) {
+                    descriptionHint.textContent = 'Выберите тип обращения, чтобы увидеть подходящую подсказку';
+                }
+            }
+        }
+
+        // ============================================================
+        // ФОРМАТИРОВАНИЕ СООБЩЕНИЯ
+        // ============================================================
+
+        function formatMessage(data) {
+            var typeLabels = {
+                'club': '🏛 Клуб исторической реконструкции',
+                'festival': '🎪 Мероприятие',
+                'shop': '🛒 Магазин или мастерская',
+                'feedback': '💬 Обратная связь'
+            };
+            
+            var message = '📋 Сообщение для РеконХаб (Единая база исторической реконструкции)\n\n';
+            message += '📌 Тип: ' + (typeLabels[data.type] || data.type) + '\n';
+            
+            if (data.type !== 'feedback') {
+                message += '🏷 Название: ' + data.name + '\n';
+            }
+            
+            if (data.city) {
+                message += '📍 Город: ' + data.city + '\n';
+            }
+            
+            if (data.country) {
+                message += '🌍 Страна: ' + data.country + '\n';
+            }
+            
+            if (data.type === 'club' && data.eras) {
+                message += '📅 Исторические эпохи: ' + data.eras + '\n';
+            }
+            if (data.type === 'club' && data.clubWebsite && data.clubWebsite !== 'Не указано') {
+                message += '🌐 Сайт клуба: ' + data.clubWebsite + '\n';
+            }
+            
+            if (data.type === 'festival') {
+                if (data.eventType) {
+                    var eventTypeLabels = {
+                        'фестиваль': '🎪 Фестиваль',
+                        'турнир': '⚔️ Турнир',
+                        'иное': '📌 Иное'
+                    };
+                    message += '📌 Тип мероприятия: ' + (eventTypeLabels[data.eventType] || data.eventType) + '\n';
+                }
+                if (data.festivalEras) message += '📅 Исторические эпохи: ' + data.festivalEras + '\n';
+                if (data.festivalWebsite && data.festivalWebsite !== 'Не указано') {
+                    message += '🌐 Сайт мероприятия: ' + data.festivalWebsite + '\n';
+                }
+            }
+            
+            if (data.type === 'shop') {
+                if (data.specialization && data.specialization !== 'Не указано') {
+                    message += '🛠 Специализация: ' + data.specialization + '\n';
+                }
+                if (data.shopEras && data.shopEras !== 'Не указано') {
+                    message += '📅 Исторические эпохи: ' + data.shopEras + '\n';
+                }
+                if (data.shopWebsite && data.shopWebsite !== 'Не указано') {
+                    message += '🌐 Сайт магазина: ' + data.shopWebsite + '\n';
+                }
+            }
+            
+            if (data.vk && data.type !== 'feedback') {
+                message += '🔗 VK: ' + data.vk + '\n';
+            }
+            
+            var fieldLabel = (data.type === 'feedback') ? '📝 Сообщение' : '📝 Описание';
+            message += '\n' + fieldLabel + ':\n' + data.description + '\n\n';
+            
+            if (data.userName && data.userName !== 'Аноним') {
+                message += '👤 Отправитель: ' + data.userName + '\n';
+            }
+            
+            message += '✅ Согласие на обработку данных: получено\n';
+            message += '⏰ Время отправки: ' + data.timestamp + '\n';
+            message += '🔗 Страница: ' + window.location.href + '\n\n';
+            message += '────────────────────────────────\n';
+            message += 'Отправьте это сообщение одним из способов:\n';
+            message += '📧 Email: ReconHub@yandex.ru\n';
+            message += '👤 ВК автора: https://vk.com/vsevolod_anadyrsky';
+            
+            return message;
+        }
+
+        // ============================================================
+        // ОБРАБОТКА ФОРМЫ
+        // ============================================================
+
+        function initForm() {
+            var form = document.getElementById('feedbackForm');
+            
+            document.getElementById('suggestType').addEventListener('change', toggleConditionalFields);
+            
+            // Снятие ошибки с чекбокса при отметке
+            var consentCheckbox = document.getElementById('consentCheckbox');
+            if (consentCheckbox) {
+                consentCheckbox.addEventListener('change', function() {
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (this.checked && consentGroup) {
+                        consentGroup.classList.remove('error');
+                    }
+                });
+            }
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                var type = document.getElementById('suggestType').value;
+                if (!type) {
+                    showNotification('Пожалуйста, выберите тип сообщения', true);
+                    return;
+                }
+                
+                // Проверка согласия на обработку данных
+                if (!consentCheckbox.checked) {
+                    showNotification('Пожалуйста, подтвердите согласие на обработку персональных данных', true);
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.add('error');
+                    consentCheckbox.focus();
+                    return;
+                } else {
+                    var consentGroup = document.querySelector('.consent-group');
+                    if (consentGroup) consentGroup.classList.remove('error');
+                }
+                
+                var formData = {
+                    type: type,
+                    name: document.getElementById('name').value.trim(),
+                    city: document.getElementById('city').value.trim(),
+                    country: document.getElementById('country').value.trim(),
+                    vk: document.getElementById('vk').value.trim(),
+                    description: document.getElementById('description').value.trim(),
+                    userName: document.getElementById('userName').value.trim() || 'Аноним',
+                    timestamp: new Date().toLocaleString('ru-RU', { 
+                        day: 'numeric', month: 'long', year: 'numeric',
+                        hour: '2-digit', minute: '2-digit'
+                    })
+                };
+                
+                // Дополнительные поля для клубов
+                if (type === 'club') {
+                    formData.eras = document.getElementById('eras').value.trim() || 'Не указано';
+                    formData.clubWebsite = document.getElementById('clubWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для мероприятий
+                if (type === 'festival') {
+                    formData.eventType = document.getElementById('eventType').value;
+                    if (!formData.eventType) {
+                        showNotification('Пожалуйста, выберите тип мероприятия', true);
+                        return;
+                    }
+                    formData.festivalEras = document.getElementById('festivalEras').value.trim() || 'Не указано';
+                    formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Дополнительные поля для магазинов
+                if (type === 'shop') {
+                    formData.specialization = document.getElementById('specialization').value.trim() || 'Не указано';
+                    formData.shopEras = document.getElementById('shopEras').value.trim() || 'Не указано';
+                    formData.shopWebsite = document.getElementById('shopWebsite').value.trim() || 'Не указано';
+                }
+                
+                // Проверка обязательных полей
+                if (!formData.description) {
+                    showNotification('Пожалуйста, заполните поле "Сообщение" или "Описание" (отмечено *)', true);
+                    return;
+                }
+                
+                if (type === 'club' || type === 'festival' || type === 'shop') {
+                    if (!formData.name) {
+                        showNotification('Пожалуйста, заполните поле "Название" (отмечено *)', true);
+                        return;
+                    }
+                    if (!formData.vk) {
+                        showNotification('Пожалуйста, заполните поле "Ссылка VK" (отмечено *)', true);
+                        return;
+                    }
+                }
+                
+                var message = formatMessage(formData);
+                
+                navigator.clipboard.writeText(message)
+                    .then(function() {
+                        showNotification('✅ Сообщение скопировано в буфер обмена! Отправьте его на email или в ВК автора.', false);
+                    })
+                    .catch(function() {
+                        showNotification('⚠️ Не удалось скопировать автоматически. Скопируйте текст вручную.', true);
+                        alert('Скопируйте этот текст и отправьте:\n\n' + message);
+                    });
+            });
+        }
+
+        // ============================================================
+        // ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentDate();
+            loadNavigationModule();
+            initForm();
+            toggleConditionalFields(); // Применяем нейтральную подпись при загрузке
+        });
+    </script>
+</body>
+</html>
