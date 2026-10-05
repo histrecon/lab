@@ -1,6 +1,6 @@
 /* ============================================================
    catalog-styles.css — Единый стиль для ЕБИР
-   Версия 3.6 — увеличен логотип в шапке
+   Версия 3.7 — добавлен чекбокс "Искать в описаниях"
    ============================================================ */
 
 /* ============================================================
@@ -495,6 +495,72 @@ h1 {
     outline: none;
 }
 .search-box input::placeholder { color: #8b7355; }
+
+/* ============================================================
+   ЧЕКБОКС "ИСКАТЬ В ОПИСАНИЯХ"
+   ============================================================ */
+
+.search-box {
+    position: relative;
+}
+
+.search-description-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 10px;
+    padding: 6px 14px;
+    background: rgba(255, 248, 240, 0.75);
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    user-select: none;
+    transition: all var(--transition);
+    font-weight: 400;
+}
+
+.search-description-toggle:hover {
+    background: rgba(255, 248, 240, 1);
+    border-color: var(--color-gold);
+    color: var(--color-brown);
+}
+
+.search-description-toggle input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--color-gold-dark);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.search-description-toggle input[type="checkbox"]:checked ~ span {
+    font-weight: 600;
+    color: var(--color-brown);
+}
+
+.search-description-toggle:has(input:checked) {
+    background: rgba(230, 163, 54, 0.15);
+    border-color: var(--color-gold);
+}
+
+@media (max-width: 480px) {
+    .search-description-toggle {
+        font-size: 0.78rem;
+        padding: 5px 11px;
+        gap: 6px;
+    }
+    .search-description-toggle input[type="checkbox"] {
+        width: 14px;
+        height: 14px;
+    }
+}
+
+
+/* ============================================================
+   ФИЛЬТРЫ
+   ============================================================ */
 
 .filters {
     display: flex;
