@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.3 — добавлена фильтрация по регионам
+// Версия 3.4 — поиск по описанию, центрирование карты на регионе
 
 (function() {
     'use strict';
@@ -114,7 +114,7 @@
         allItems: [],
         filteredItems: [],
         countries: new Set(),
-        regions: new Set(),       // <-- НОВОЕ: набор регионов
+        regions: new Set(),
         cities: new Set(),
         eras: new Set(),
         specializations: new Set(),
@@ -155,7 +155,6 @@
         return [55.7558 + (Math.random() - 0.5) * 15, 37.6176 + (Math.random() - 0.5) * 30];
     }
 
-    // <-- НОВОЕ: получить регион для города
     function getItemRegion(city) {
         if (typeof cityRegions !== 'undefined' && cityRegions[city]) {
             return cityRegions[city];
@@ -176,6 +175,12 @@
         return input ? input.value.toLowerCase().trim() : '';
     }
 
+    // <-- НОВОЕ: проверяем, включён ли поиск по описаниям
+    function isSearchInDescriptionEnabled() {
+        const checkbox = document.getElementById('searchInDescription');
+        return checkbox ? checkbox.checked : true;
+    }
+
     function getFilterValue(id) {
         const el = document.getElementById(id);
         return el ? el.value : '';
@@ -183,7 +188,7 @@
 
     function renderEraTags(eras, eraTagClass) {
         if (!eras || eras.length === 0) return '<span style="color: #8b7355;">Не указано</span>';
-        return eras.map(era => 
+        return eras.map(era =>
             `<span class="${eraTagClass}">${era}</span>`
         ).join('');
     }
@@ -235,12 +240,10 @@
         const description = item.description || 'Описание отсутствует';
         const needsDescTruncate = needsTruncate(description);
 
-        // Регион для отображения в карточке
         const itemRegion = getItemRegion(item.city);
 
         let bodyContent = '';
 
-        // Специализация для магазинов
         if (state.type === 'shops' && item.specialization) {
             const spec = item.specialization;
             const needsSpecTruncate = needsTruncate(spec);
@@ -256,7 +259,6 @@
             `;
         }
 
-        // Описание
         const descHtml = renderDescription(
             description,
             config.descriptionWrapperClass,
@@ -275,7 +277,6 @@
 
         const linksHtml = renderFooterLinks(item.vk, item.website, config.vkLinkClass, config.websiteLinkClass);
 
-        // <-- В заголовке карточки показываем город + регион
         card.innerHTML = `
             <div class="${config.headerClass}">
                 <div class="${config.nameClass}">${item.name}</div>
@@ -304,7 +305,6 @@
             </div>
         `;
 
-        // Обработчики событий
         attachCardEvents(card, item);
 
         return card;
@@ -313,7 +313,6 @@
     function attachCardEvents(card, item) {
         const config = state.config;
 
-        // Клик по локации
         const locationEl = card.querySelector(`.${config.locationClass}`);
         if (locationEl) {
             locationEl.addEventListener('click', function(e) {
@@ -322,14 +321,13 @@
             });
         }
 
-        // Кнопки "Читать далее"
         const readMoreBtns = card.querySelectorAll(`.${config.readMoreBtnClass}`);
         readMoreBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const wrapper = this.closest(`.${config.fieldClass}`).querySelector(`.${config.descriptionWrapperClass}`);
                 const isExpanded = wrapper.classList.contains('expanded');
-                
+
                 if (isExpanded) {
                     wrapper.classList.remove('expanded');
                     this.textContent = 'Читать далее ▼';
@@ -340,14 +338,13 @@
             });
         });
 
-        // Кнопки специализации для магазинов
         const specBtns = card.querySelectorAll('.shop-specialization-btn');
         specBtns.forEach(btn => {
             btn.addEventListener('click', function(e) {
                 e.stopPropagation();
                 const wrapper = this.closest(`.${config.fieldClass}`).querySelector('.shop-specialization-wrapper');
                 const isExpanded = wrapper.classList.contains('expanded');
-                
+
                 if (isExpanded) {
                     wrapper.classList.remove('expanded');
                     this.textContent = 'Читать далее ▼';
@@ -379,7 +376,7 @@
         }
 
         container.innerHTML = '';
-        
+
         items.forEach((item, index) => {
             const card = createItemCard(item, index);
             container.appendChild(card);
@@ -432,7 +429,7 @@
 
     function initFilters() {
         const countryFilter = document.getElementById('countryFilter');
-        const regionFilter = document.getElementById('regionFilter');   // <-- НОВОЕ
+        const regionFilter = document.getElementById('regionFilter');
         const cityFilter = document.getElementById('cityFilter');
         const eraFilter = document.getElementById('eraFilter');
         const resetButton = document.getElementById('resetButton');
@@ -449,7 +446,7 @@
         };
 
         sortAndAppend(state.countries, countryFilter);
-        sortAndAppend(state.regions, regionFilter);   // <-- НОВОЕ
+        sortAndAppend(state.regions, regionFilter);
         sortAndAppend(state.cities, cityFilter);
         sortAndAppend(state.eras, eraFilter);
 
@@ -476,13 +473,31 @@
             });
         }
 
+        // <-- НОВОЕ: обработчик чекбокса "Искать в описаниях"
+        const descCheckbox = document.getElementById('searchInDescription');
+        if (descCheckbox) {
+            descCheckbox.addEventListener('change', function() {
+                // Если в поиске уже есть текст — сразу применяем фильтр
+                if (getSearchTerm() !== '') {
+                    applyFilters();
+                }
+            });
+        }
+
         countryFilter?.addEventListener('change', applyFilters);
 
-        // <-- НОВОЕ: обработчик для фильтра регионов
+        // <-- ОБНОВЛЕНО: обработчик для фильтра регионов
         regionFilter?.addEventListener('change', function() {
-            // Опционально: можно фильтровать список городов по выбранному региону
             updateCityFilterByRegion();
             applyFilters();
+
+            // Центрируем карту на выбранном регионе
+            const selectedRegion = this.value;
+            if (selectedRegion && state.map) {
+                centerMapOnRegion(selectedRegion);
+            } else if (!selectedRegion && state.map) {
+                state.map.setView(CONFIG.map.defaultCenter, CONFIG.map.defaultZoom);
+            }
         });
 
         cityFilter?.addEventListener('change', function() {
@@ -492,6 +507,7 @@
                 centerMapOnCity(selectedCity);
             }
         });
+
         eraFilter?.addEventListener('change', applyFilters);
 
         const specFilter = document.getElementById('specializationFilter');
@@ -500,25 +516,20 @@
         resetButton?.addEventListener('click', resetFilters);
     }
 
-    // <-- НОВОЕ: обновление списка городов в зависимости от выбранного региона
+    // Обновление списка городов в зависимости от выбранного региона
     function updateCityFilterByRegion() {
         const selectedRegion = getFilterValue('regionFilter');
         const cityFilter = document.getElementById('cityFilter');
         if (!cityFilter) return;
 
-        // Сохраняем текущий выбранный город (если он есть в новом списке — оставим)
         const currentCity = cityFilter.value;
 
-        // Очищаем фильтр городов
         while (cityFilter.options.length > 1) cityFilter.remove(1);
 
-        // Отфильтровываем города
         let citiesToShow = new Set();
         if (selectedRegion === '') {
-            // Если регион не выбран — показываем все города
             citiesToShow = state.cities;
         } else {
-            // Иначе — только города этого региона
             state.allItems.forEach(item => {
                 if (getItemRegion(item.city) === selectedRegion) {
                     citiesToShow.add(item.city);
@@ -526,7 +537,6 @@
             });
         }
 
-        // Сортируем и добавляем
         Array.from(citiesToShow).sort().forEach(city => {
             const option = document.createElement('option');
             option.value = city;
@@ -534,7 +544,6 @@
             cityFilter.appendChild(option);
         });
 
-        // Восстанавливаем выбранный город, если он ещё доступен
         if (currentCity && citiesToShow.has(currentCity)) {
             cityFilter.value = currentCity;
         } else {
@@ -544,27 +553,41 @@
 
     function applyFilters() {
         const searchTerm = getSearchTerm();
+        const searchInDescription = isSearchInDescriptionEnabled();
         const selectedCountry = getFilterValue('countryFilter');
-        const selectedRegion = getFilterValue('regionFilter');   // <-- НОВОЕ
+        const selectedRegion = getFilterValue('regionFilter');
         const selectedCity = getFilterValue('cityFilter');
         const selectedEra = getFilterValue('eraFilter');
         const selectedSpecialization = getFilterValue('specializationFilter');
 
         state.filteredItems = state.allItems.filter(item => {
-            const matchesSearch = searchTerm === '' || 
-                (item.name && item.name.toLowerCase().includes(searchTerm)) || 
-                (item.city && item.city.toLowerCase().includes(searchTerm)) ||
-                (item.specialization && item.specialization.toLowerCase().includes(searchTerm));
+            // --- ПОИСК ---
+            let matchesSearch = true;
+            if (searchTerm !== '') {
+                const itemRegion = getItemRegion(item.city);
+                const baseMatch =
+                    (item.name && item.name.toLowerCase().includes(searchTerm)) ||
+                    (item.city && item.city.toLowerCase().includes(searchTerm)) ||
+                    (itemRegion && itemRegion.toLowerCase().includes(searchTerm)) ||
+                    (item.country && item.country.toLowerCase().includes(searchTerm)) ||
+                    (item.specialization && item.specialization.toLowerCase().includes(searchTerm));
 
+                const descriptionMatch = searchInDescription &&
+                    item.description &&
+                    item.description.toLowerCase().includes(searchTerm);
+
+                matchesSearch = baseMatch || descriptionMatch;
+            }
+
+            // --- ФИЛЬТРЫ ---
             const matchesCountry = selectedCountry === '' || item.country === selectedCountry;
             const matchesCity = selectedCity === '' || item.city === selectedCity;
             const matchesEra = selectedEra === '' || (item.eras && item.eras.includes(selectedEra));
-            
-            // <-- НОВОЕ: проверка по региону
+
             const itemRegion = getItemRegion(item.city);
             const matchesRegion = selectedRegion === '' || itemRegion === selectedRegion;
 
-            const matchesSpecialization = selectedSpecialization === '' || 
+            const matchesSpecialization = selectedSpecialization === '' ||
                 (item.specialization && item.specialization.toLowerCase().includes(selectedSpecialization.toLowerCase()));
 
             return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization;
@@ -577,15 +600,17 @@
     function resetFilters() {
         document.getElementById('searchInput').value = '';
         document.getElementById('countryFilter').value = '';
-        document.getElementById('regionFilter').value = '';   // <-- НОВОЕ
+        document.getElementById('regionFilter').value = '';
         document.getElementById('cityFilter').value = '';
         document.getElementById('eraFilter').value = '';
         const specFilter = document.getElementById('specializationFilter');
         if (specFilter) specFilter.value = '';
 
-        // Восстанавливаем полный список городов (после возможной фильтрации по региону)
-        updateCityFilterByRegion();
+        // Сбрасываем чекбокс "Искать в описаниях"
+        const descCheckbox = document.getElementById('searchInDescription');
+        if (descCheckbox) descCheckbox.checked = true;
 
+        updateCityFilterByRegion();
         applyFilters();
 
         if (state.map) {
@@ -615,13 +640,6 @@
         }).addTo(state.map);
 
         addCityMarkers();
-
-        document.getElementById('cityFilter')?.addEventListener('change', function() {
-            const selectedCity = this.value;
-            if (selectedCity && state.map) {
-                centerMapOnCity(selectedCity);
-            }
-        });
     }
 
     function addCityMarkers() {
@@ -725,6 +743,60 @@
         }
     }
 
+    /**
+     * Центрирует карту на регионе: вычисляет средние координаты всех городов региона
+     * и подбирает подходящий зум в зависимости от разброса точек.
+     */
+    function centerMapOnRegion(regionName) {
+        if (!state.map || !regionName) return;
+
+        const coords = [];
+        state.allItems.forEach(item => {
+            if (getItemRegion(item.city) === regionName) {
+                const c = getCityCoordinates(item.city);
+                if (c) coords.push(c);
+            }
+        });
+
+        if (coords.length === 0) return;
+
+        // Если город один — просто центрируемся на нём
+        if (coords.length === 1) {
+            state.map.setView(coords[0], CONFIG.map.cityZoom);
+            return;
+        }
+
+        let sumLat = 0, sumLng = 0;
+        let minLat = coords[0][0], maxLat = coords[0][0];
+        let minLng = coords[0][1], maxLng = coords[0][1];
+
+        coords.forEach(([lat, lng]) => {
+            sumLat += lat;
+            sumLng += lng;
+            if (lat < minLat) minLat = lat;
+            if (lat > maxLat) maxLat = lat;
+            if (lng < minLng) minLng = lng;
+            if (lng > maxLng) maxLng = lng;
+        });
+
+        const center = [sumLat / coords.length, sumLng / coords.length];
+
+        // Подбираем зум по разбросу координат
+        const latSpan = maxLat - minLat;
+        const lngSpan = maxLng - minLng;
+        const maxSpan = Math.max(latSpan, lngSpan);
+
+        let zoom;
+        if (maxSpan < 0.5)       zoom = 10;  // Москва и окрестности
+        else if (maxSpan < 1.5)  zoom = 9;   // Московская область
+        else if (maxSpan < 3)    zoom = 8;   // Несколько областей
+        else if (maxSpan < 8)    zoom = 7;   // Большой регион
+        else if (maxSpan < 20)   zoom = 6;   // Крупный ФО
+        else                     zoom = 5;   // Полстраны
+
+        state.map.setView(center, zoom, { animate: true });
+    }
+
     window.selectCity = function(city) {
         const cityFilter = document.getElementById('cityFilter');
         if (cityFilter) {
@@ -763,7 +835,7 @@
 
     function createFallbackNavigation() {
         if (document.getElementById('fallbackNav')) return;
-        
+
         const fallbackNav = document.createElement('nav');
         fallbackNav.id = 'fallbackNav';
         fallbackNav.style.cssText = `
@@ -814,7 +886,7 @@
             state.allItems = data[config.dataKey] || [];
 
             state.countries = new Set();
-            state.regions = new Set();   // <-- НОВОЕ
+            state.regions = new Set();
             state.cities = new Set();
             state.eras = new Set();
             state.specializations = new Set();
@@ -822,8 +894,6 @@
             state.allItems.forEach(item => {
                 state.countries.add(item.country);
                 state.cities.add(item.city);
-
-                // <-- НОВОЕ: собираем регион для каждого города
                 state.regions.add(getItemRegion(item.city));
 
                 if (item.eras) {
@@ -906,12 +976,14 @@
         resetFilters: resetFilters,
         selectCity: window.selectCity,
         centerMapOnCity: centerMapOnCity,
+        centerMapOnRegion: centerMapOnRegion,
         renderEraTags: renderEraTags,
         renderDescription: renderDescription,
         renderFooterLinks: renderFooterLinks,
         loadNavigationModule: loadNavigationModule,
         setCurrentDate: window.setCurrentDate,
-        getItemRegion: getItemRegion           // <-- НОВОЕ: экспорт хелпера
+        getItemRegion: getItemRegion,
+        isSearchInDescriptionEnabled: isSearchInDescriptionEnabled
     };
 
 })();
