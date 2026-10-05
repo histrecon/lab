@@ -1,6 +1,6 @@
 /* ============================================================
    catalog-styles.css — Единый стиль для ЕБИР
-   Версия 3.8 — фильтры в виде единой сетки
+   Версия 3.7 — добавлен чекбокс "Искать в описаниях"
    ============================================================ */
 
 /* ============================================================
@@ -559,205 +559,94 @@ h1 {
 
 
 /* ============================================================
-   ФИЛЬТРЫ — единая сетка
+   ФИЛЬТРЫ
    ============================================================ */
 
 .filters {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    align-items: stretch;
 }
-
-/* Все селекты и кнопки — одинаковая высота, ширина по колонке */
-.filters select,
-.filters .tags-info-button,
-.filters .reset-button {
-    width: 100%;
-    min-width: 0;
-    height: 48px;
-    padding: 0 16px;
+.filters select {
+    padding: 14px 18px;
+    min-width: 180px;
     border: 2px solid var(--color-border);
     border-radius: var(--radius);
     background: rgba(255, 248, 240, 0.9);
-    font-size: 0.95rem;
+    font-size: 1rem;
     color: var(--color-text);
-    font-family: inherit;
     transition: all var(--transition);
-    cursor: pointer;
-    box-sizing: border-box;
 }
-
-/* Селекты */
-.filters select {
-    appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%238b4513' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 14px center;
-    background-size: 18px;
-    padding-right: 42px;
-    text-overflow: ellipsis;
-}
-
-.filters select:hover {
-    border-color: var(--color-gold);
-    background-color: rgba(255, 252, 245, 1);
-}
-
 .filters select:focus {
     border-color: var(--color-gold);
-    box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.25);
+    box-shadow: 0 0 0 3px rgba(230, 163, 54, 0.3);
     outline: none;
 }
 
-/* Кнопки — те же параметры, что и у селектов */
-.filters .tags-info-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    font-weight: 600;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+.tags-info-button {
+    padding: 14px 18px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
     background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
     color: var(--color-text);
-    border-color: var(--color-border);
-}
-
-.filters .tags-info-button:hover {
-    background: linear-gradient(135deg, var(--color-gold-dark), var(--color-gold-darker));
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.25);
-}
-
-.filters .tags-info-button:active {
-    transform: translateY(0);
-}
-
-/* Иконка в кнопке */
-.filters .tags-info-button span:first-child {
-    font-size: 1.1rem;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-/* Кнопка сброса — нейтральная */
-.filters .reset-button {
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-weight: 600;
+    gap: 8px;
     white-space: nowrap;
-    background: rgba(255, 248, 240, 0.9);
-    color: var(--color-brown);
+    transition: all var(--transition);
+}
+.tags-info-button:hover {
+    background: linear-gradient(135deg, var(--color-gold-dark), var(--color-gold-darker));
+    transform: translateY(-2px);
 }
 
-.filters .reset-button:hover {
+.reset-button {
+    padding: 14px 18px;
+    border: 2px solid var(--color-border);
+    border-radius: var(--radius);
+    background: rgba(255, 248, 240, 0.9);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all var(--transition);
+}
+.reset-button:hover {
     background: #ffe4c4;
     border-color: var(--color-gold);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(139, 69, 19, 0.15);
 }
 
-.filters .reset-button:active {
-    transform: translateY(0);
-}
-
-/* Специальная кнопка "Расшифровка специализаций" (синяя) */
-.filters .tags-info-button#specInfoButton {
-    background: linear-gradient(135deg, #36aee6, #1c6dd1);
-    border-color: #1a5cc1;
-    color: #fff;
-}
-
-.filters .tags-info-button#specInfoButton:hover {
-    background: linear-gradient(135deg, #1c6dd1, #1a5cb8);
-    box-shadow: 0 4px 12px rgba(28, 109, 209, 0.3);
-}
-
-/* ============================================================
-   АДАПТИВНОСТЬ ФИЛЬТРОВ
-   ============================================================ */
-
-/* Планшеты — 3 колонки */
-@media (max-width: 992px) {
-    .filters {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Большие телефоны — 2 колонки */
 @media (max-width: 768px) {
-    .filters {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-    }
-
+    .controls { padding: 15px; gap: 12px; }
+    .filters { flex-direction: column; align-items: stretch; gap: 8px; }
     .filters select,
-    .filters .tags-info-button,
-    .filters .reset-button {
+    .tags-info-button,
+    .reset-button {
+        width: 100%;
+        min-width: auto;
+        padding: 10px 14px;
+        font-size: 0.95rem;
         height: 44px;
-        font-size: 0.88rem;
-        padding: 0 12px;
-    }
-
-    .filters select {
-        padding-right: 34px;
-        background-size: 16px;
-        background-position: right 10px center;
-    }
-
-    .filters .tags-info-button span:first-child {
-        font-size: 1rem;
     }
 }
-
-/* Маленькие телефоны — 1 колонка */
 @media (max-width: 480px) {
-    .filters {
-        grid-template-columns: 1fr;
-        gap: 8px;
-    }
-
     .filters select,
-    .filters .tags-info-button,
-    .filters .reset-button {
-        height: 42px;
-        font-size: 0.85rem;
-        padding: 0 12px;
-    }
-
-    .filters select {
-        padding-right: 34px;
-        background-size: 16px;
-        background-position: right 10px center;
-    }
-
-    .filters .tags-info-button,
-    .filters .reset-button {
-        justify-content: flex-start;
-        padding-left: 16px;
-    }
-}
-
-/* Очень маленькие экраны */
-@media (max-width: 360px) {
-    .filters select,
-    .filters .tags-info-button,
-    .filters .reset-button {
-        font-size: 0.8rem;
+    .tags-info-button,
+    .reset-button {
+        padding: 8px 12px;
+        font-size: 0.9rem;
         height: 40px;
-        padding: 0 10px;
     }
 }
 
-
-/* ============================================================
-   КАРТА
-   ============================================================ */
-
+/* Карта */
 .map-container {
     height: 500px;
     margin-bottom: 30px;
