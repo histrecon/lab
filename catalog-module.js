@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.2 — без LazyLoader и бургера
+// Версия 3.3 — добавлена фильтрация по регионам
 
 (function() {
     'use strict';
@@ -114,6 +114,7 @@
         allItems: [],
         filteredItems: [],
         countries: new Set(),
+        regions: new Set(),       // <-- НОВОЕ: набор регионов
         cities: new Set(),
         eras: new Set(),
         specializations: new Set(),
@@ -152,6 +153,14 @@
             return cityCoordinates[city];
         }
         return [55.7558 + (Math.random() - 0.5) * 15, 37.6176 + (Math.random() - 0.5) * 30];
+    }
+
+    // <-- НОВОЕ: получить регион для города
+    function getItemRegion(city) {
+        if (typeof cityRegions !== 'undefined' && cityRegions[city]) {
+            return cityRegions[city];
+        }
+        return 'Не указан';
     }
 
     window.setCurrentDate = function() {
@@ -226,6 +235,9 @@
         const description = item.description || 'Описание отсутствует';
         const needsDescTruncate = needsTruncate(description);
 
+        // Регион для отображения в карточке
+        const itemRegion = getItemRegion(item.city);
+
         let bodyContent = '';
 
         // Специализация для магазинов
@@ -263,12 +275,16 @@
 
         const linksHtml = renderFooterLinks(item.vk, item.website, config.vkLinkClass, config.websiteLinkClass);
 
+        // <-- В заголовке карточки показываем город + регион
         card.innerHTML = `
             <div class="${config.headerClass}">
                 <div class="${config.nameClass}">${item.name}</div>
                 <div class="${config.locationClass}" data-city="${item.city}">
                     <span>📍</span>
                     <span>${item.city}, ${item.country}</span>
+                </div>
+                <div style="font-size: 0.85rem; opacity: 0.75; margin-top: 4px; color: #4a3f35;">
+                    🗺️ ${itemRegion}
                 </div>
             </div>
             <div class="${config.bodyClass}">
@@ -364,7 +380,6 @@
 
         container.innerHTML = '';
         
-        // Рендерим все карточки сразу (без ленивой загрузки)
         items.forEach((item, index) => {
             const card = createItemCard(item, index);
             container.appendChild(card);
@@ -390,7 +405,9 @@
             statsElement.innerHTML = `Показаны все <strong>${state.allItems.length}</strong> ${config.itemName}`;
         } else {
             const uniqueCities = new Set(state.filteredItems.map(item => item.city)).size;
-            let extraInfo = `<small>в <strong>${uniqueCities}</strong> городах</small>`;
+            const uniqueRegions = new Set(state.filteredItems.map(item => getItemRegion(item.city))).size;
+
+            let extraInfo = `<small>в <strong>${uniqueCities}</strong> городах, <strong>${uniqueRegions}</strong> регионах</small>`;
 
             if (state.type === 'shops') {
                 const uniqueSpecs = new Set(
@@ -398,7 +415,7 @@
                         .filter(item => item.specialization)
                         .flatMap(item => item.specialization.split(',').map(s => s.trim()).filter(s => s))
                 ).size;
-                extraInfo = `<small>в <strong>${uniqueCities}</strong> городах, <strong>${uniqueSpecs}</strong> специализаций</small>`;
+                extraInfo = `<small>в <strong>${uniqueCities}</strong> городах, <strong>${uniqueRegions}</strong> регионах, <strong>${uniqueSpecs}</strong> специализаций</small>`;
             }
 
             statsElement.innerHTML = `
@@ -415,6 +432,7 @@
 
     function initFilters() {
         const countryFilter = document.getElementById('countryFilter');
+        const regionFilter = document.getElementById('regionFilter');   // <-- НОВОЕ
         const cityFilter = document.getElementById('cityFilter');
         const eraFilter = document.getElementById('eraFilter');
         const resetButton = document.getElementById('resetButton');
@@ -431,6 +449,7 @@
         };
 
         sortAndAppend(state.countries, countryFilter);
+        sortAndAppend(state.regions, regionFilter);   // <-- НОВОЕ
         sortAndAppend(state.cities, cityFilter);
         sortAndAppend(state.eras, eraFilter);
 
@@ -458,6 +477,14 @@
         }
 
         countryFilter?.addEventListener('change', applyFilters);
+
+        // <-- НОВОЕ: обработчик для фильтра регионов
+        regionFilter?.addEventListener('change', function() {
+            // Опционально: можно фильтровать список городов по выбранному региону
+            updateCityFilterByRegion();
+            applyFilters();
+        });
+
         cityFilter?.addEventListener('change', function() {
             applyFilters();
             const selectedCity = this.value;
@@ -473,9 +500,52 @@
         resetButton?.addEventListener('click', resetFilters);
     }
 
+    // <-- НОВОЕ: обновление списка городов в зависимости от выбранного региона
+    function updateCityFilterByRegion() {
+        const selectedRegion = getFilterValue('regionFilter');
+        const cityFilter = document.getElementById('cityFilter');
+        if (!cityFilter) return;
+
+        // Сохраняем текущий выбранный город (если он есть в новом списке — оставим)
+        const currentCity = cityFilter.value;
+
+        // Очищаем фильтр городов
+        while (cityFilter.options.length > 1) cityFilter.remove(1);
+
+        // Отфильтровываем города
+        let citiesToShow = new Set();
+        if (selectedRegion === '') {
+            // Если регион не выбран — показываем все города
+            citiesToShow = state.cities;
+        } else {
+            // Иначе — только города этого региона
+            state.allItems.forEach(item => {
+                if (getItemRegion(item.city) === selectedRegion) {
+                    citiesToShow.add(item.city);
+                }
+            });
+        }
+
+        // Сортируем и добавляем
+        Array.from(citiesToShow).sort().forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            option.textContent = city;
+            cityFilter.appendChild(option);
+        });
+
+        // Восстанавливаем выбранный город, если он ещё доступен
+        if (currentCity && citiesToShow.has(currentCity)) {
+            cityFilter.value = currentCity;
+        } else {
+            cityFilter.value = '';
+        }
+    }
+
     function applyFilters() {
         const searchTerm = getSearchTerm();
         const selectedCountry = getFilterValue('countryFilter');
+        const selectedRegion = getFilterValue('regionFilter');   // <-- НОВОЕ
         const selectedCity = getFilterValue('cityFilter');
         const selectedEra = getFilterValue('eraFilter');
         const selectedSpecialization = getFilterValue('specializationFilter');
@@ -490,10 +560,14 @@
             const matchesCity = selectedCity === '' || item.city === selectedCity;
             const matchesEra = selectedEra === '' || (item.eras && item.eras.includes(selectedEra));
             
+            // <-- НОВОЕ: проверка по региону
+            const itemRegion = getItemRegion(item.city);
+            const matchesRegion = selectedRegion === '' || itemRegion === selectedRegion;
+
             const matchesSpecialization = selectedSpecialization === '' || 
                 (item.specialization && item.specialization.toLowerCase().includes(selectedSpecialization.toLowerCase()));
 
-            return matchesSearch && matchesCountry && matchesCity && matchesEra && matchesSpecialization;
+            return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization;
         });
 
         displayItems(state.filteredItems);
@@ -503,10 +577,14 @@
     function resetFilters() {
         document.getElementById('searchInput').value = '';
         document.getElementById('countryFilter').value = '';
+        document.getElementById('regionFilter').value = '';   // <-- НОВОЕ
         document.getElementById('cityFilter').value = '';
         document.getElementById('eraFilter').value = '';
         const specFilter = document.getElementById('specializationFilter');
         if (specFilter) specFilter.value = '';
+
+        // Восстанавливаем полный список городов (после возможной фильтрации по региону)
+        updateCityFilterByRegion();
 
         applyFilters();
 
@@ -601,9 +679,12 @@
                     itemList += `<div style="margin: 5px 0; color: #8b4513; font-style: italic;">... и еще ${cityItems.length - 3} ${state.config.itemName}</div>`;
                 }
 
+                const cityRegion = getItemRegion(city);
+
                 marker.bindPopup(`
                     <div style="min-width: 250px;">
-                        <h3 style="margin: 0 0 10px 0; color: #8b4513;">${city}</h3>
+                        <h3 style="margin: 0 0 5px 0; color: #8b4513;">${city}</h3>
+                        <div style="font-size: 0.85rem; color: #6a5a4a; margin-bottom: 8px;">${cityRegion}</div>
                         <p><strong>${state.config.itemName} в городе:</strong> ${itemCount}</p>
                         <p><strong>Исторические эпохи:</strong> ${eraList}</p>
                         ${itemCount > 0 ? `<p><strong>Примеры ${state.config.itemName}:</strong></p>${itemList}` : ''}
@@ -733,6 +814,7 @@
             state.allItems = data[config.dataKey] || [];
 
             state.countries = new Set();
+            state.regions = new Set();   // <-- НОВОЕ
             state.cities = new Set();
             state.eras = new Set();
             state.specializations = new Set();
@@ -740,6 +822,10 @@
             state.allItems.forEach(item => {
                 state.countries.add(item.country);
                 state.cities.add(item.city);
+
+                // <-- НОВОЕ: собираем регион для каждого города
+                state.regions.add(getItemRegion(item.city));
+
                 if (item.eras) {
                     item.eras.forEach(era => state.eras.add(era));
                 }
@@ -786,7 +872,6 @@
             window.setCurrentDate();
         }
 
-        // Загружаем навигацию и данные
         loadNavigationModule()
             .then(() => {
                 loadData();
@@ -825,7 +910,8 @@
         renderDescription: renderDescription,
         renderFooterLinks: renderFooterLinks,
         loadNavigationModule: loadNavigationModule,
-        setCurrentDate: window.setCurrentDate
+        setCurrentDate: window.setCurrentDate,
+        getItemRegion: getItemRegion           // <-- НОВОЕ: экспорт хелпера
     };
 
 })();
