@@ -234,6 +234,27 @@
         .tag-checkbox.selected input[type="checkbox"] {
             accent-color: #fff;
         }
+
+        /* Поле для ручного ввода */
+        .manual-input-group {
+            margin-top: 12px;
+            padding: 12px 15px;
+            background: rgba(255, 248, 240, 0.4);
+            border: 1px dashed var(--color-border);
+            border-radius: var(--radius);
+        }
+
+        .manual-input-group .form-label {
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+            color: var(--color-brown-light);
+        }
+
+        .manual-input-group .form-input {
+            padding: 10px 14px;
+            font-size: 0.95rem;
+            background: rgba(255, 252, 248, 0.9);
+        }
     </style>
 </head>
 <body>
@@ -298,6 +319,11 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
+                        <div class="manual-input-group">
+                            <label class="form-label" for="clubErasManual">Дополнительные эпохи (вручную)</label>
+                            <input type="text" class="form-input" id="clubErasManual" placeholder="Например: XVIII в., Ренессанс, Смутное время...">
+                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="clubWebsite">
@@ -328,6 +354,11 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
+                        <div class="manual-input-group">
+                            <label class="form-label" for="festivalErasManual">Дополнительные эпохи (вручную)</label>
+                            <input type="text" class="form-input" id="festivalErasManual" placeholder="Например: XVIII в., Ренессанс...">
+                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="festivalWebsite">
@@ -346,6 +377,11 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие специализации из списка</span>
+                        <div class="manual-input-group">
+                            <label class="form-label" for="shopSpecializationManual">Дополнительная специализация (вручную)</label>
+                            <input type="text" class="form-input" id="shopSpecializationManual" placeholder="Например: плетение из лозы, косторезное дело...">
+                            <span class="form-hint">Укажите через запятую, если нужной специализации нет в списке</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Исторические эпохи</label>
@@ -353,6 +389,11 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
+                        <div class="manual-input-group">
+                            <label class="form-label" for="shopErasManual">Дополнительные эпохи (вручную)</label>
+                            <input type="text" class="form-input" id="shopErasManual" placeholder="Например: XVIII в., Ренессанс...">
+                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="shopWebsite">
@@ -471,27 +512,46 @@
         }
 
         // ============================================================
-        // СПИСКИ ТЕГОВ
+        // СПИСКИ ТЕГОВ (полные, с учётом всех JSON)
         // ============================================================
         const AVAILABLE_ERAS = [
-            "VIII в.", "IX в.", "X в.", "XI в.", "XII в.", "XIII в.", "XIV в.", "XV в.",
+            // Века до н.э.
+            "XV в. до н.э.", "XIV в. до н.э.", "XIII в. до н.э.",
+            "VI в. до н.э.", "V в. до н.э.", "II в. до н.э.", "I в. до н.э.",
+            // Века н.э.
+            "I в.", "II в.", "III в.", "IV в.", "V в.", "VI в.", "VII в.", "VIII в.",
+            "IX в.", "X в.", "XI в.", "XII в.", "XIII в.", "XIV в.", "XV в.",
             "XVI в.", "XVII в.", "XVIII в.", "XIX в.", "XX в.", "XXI в.",
+            // Крупные периоды и направления
             "Древний Египет", "Древняя Греция", "Древний Рим", "Хеттское царство",
             "Средневековье", "Мультивек", "Эпоха Петра I", "Наполеоника",
+            "Великое Переселение народов", "Монголы",
             "ACW", "ПМВ", "Гражданская война", "ВОВ", "Афганская война",
-            "Япония", "ИСБ", "СМБ", "HEMA", "СБ", "БИФ", "Ролевка"
+            "Япония", "ИСБ", "СМБ", "HEMA", "СБ", "БИФ", "Ролевка",
+            // Служебные
+            "Не указано"
         ];
 
         const AVAILABLE_SPECIALIZATIONS = [
+            // Кузнечное дело
             "Кузнец-оружейник", "Кузнец-бронник", "Кузнец-инструментальщик",
-            "Кузнец-художественный", "Древодел-оружейник", "Фурнитура",
-            "Чеканка-гравировка", "Мастер по всечке", "Литьё", "Ткани",
-            "Тканые изделия", "Пряжа-нитки", "Вязание", "Валяние из шерсти",
-            "Шитье одежды", "Шитье палаток", "Обувное дело", "Кожгалантерея",
-            "Натуральный мех", "Гончарное дело", "Столярное дело",
-            "Резьба по дереву", "Резьба по кости", "Питейные/сигнальные рога",
-            "Настольные игры", "Ролевой стафф", "Скрытая защита",
-            "Инструменты для реконструкторов"
+            "Кузнец-художественный", "Древодел-оружейник",
+            // Металлообработка и литьё
+            "Литьё", "Фурнитура", "Чеканка-гравировка", "Мастер по всечке",
+            // Ткани и текстиль
+            "Ткани", "Тканые изделия", "Пряжа-нитки", "Вязание",
+            "Валяние из шерсти", "Шитье одежды", "Шитье палаток",
+            // Кожа и обувь
+            "Обувное дело", "Кожгалантерея", "Натуральный мех",
+            // Дерево и кость
+            "Столярное дело", "Резьба по дереву", "Резьба по кости",
+            "Питейные/сигнальные рога",
+            // Прочее ремесло
+            "Гончарное дело", "Настольные игры",
+            // Ролевое и защита
+            "Ролевой стафф", "Скрытая защита", "Инструменты для реконструкторов",
+            // Дополнительные (из specialization-info.js)
+            "Прядение", "Ткачество", "Кожевенное дело", "Ювелирное дело"
         ];
 
         // ============================================================
@@ -526,13 +586,30 @@
         }
 
         // ============================================================
-        // ПОЛУЧЕНИЕ ВЫБРАННЫХ ЗНАЧЕНИЙ
+        // ПОЛУЧЕНИЕ ВЫБРАННЫХ ЗНАЧЕНИЙ (чекбоксы + ручной ввод)
         // ============================================================
-        function getSelectedValues(containerId) {
+        function getSelectedValues(containerId, manualInputId) {
             const container = document.getElementById(containerId);
-            if (!container) return [];
-            const checked = container.querySelectorAll('input[type="checkbox"]:checked');
-            return Array.from(checked).map(cb => cb.value);
+            const manualInput = document.getElementById(manualInputId);
+            let values = [];
+
+            // Собираем отмеченные чекбоксы
+            if (container) {
+                const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+                values = Array.from(checked).map(cb => cb.value);
+            }
+
+            // Добавляем значения из ручного ввода
+            if (manualInput) {
+                const manualText = manualInput.value.trim();
+                if (manualText) {
+                    const manualValues = manualText.split(',').map(s => s.trim()).filter(s => s);
+                    values = values.concat(manualValues);
+                }
+            }
+
+            // Убираем дубликаты (на случай, если вручную ввели то же, что было в чекбоксах)
+            return [...new Set(values)];
         }
 
         // ============================================================
@@ -761,7 +838,7 @@
                 
                 // Дополнительные поля для клубов
                 if (type === 'club') {
-                    formData.eras = getSelectedValues('clubErasGroup');
+                    formData.eras = getSelectedValues('clubErasGroup', 'clubErasManual');
                     formData.clubWebsite = document.getElementById('clubWebsite').value.trim();
                 }
                 
@@ -772,14 +849,14 @@
                         showNotification('Пожалуйста, выберите тип мероприятия', true);
                         return;
                     }
-                    formData.festivalEras = getSelectedValues('festivalErasGroup');
+                    formData.festivalEras = getSelectedValues('festivalErasGroup', 'festivalErasManual');
                     formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim();
                 }
                 
                 // Дополнительные поля для магазинов
                 if (type === 'shop') {
-                    formData.specialization = getSelectedValues('shopSpecializationGroup');
-                    formData.shopEras = getSelectedValues('shopErasGroup');
+                    formData.specialization = getSelectedValues('shopSpecializationGroup', 'shopSpecializationManual');
+                    formData.shopEras = getSelectedValues('shopErasGroup', 'shopErasManual');
                     formData.shopWebsite = document.getElementById('shopWebsite').value.trim();
                 }
                 
