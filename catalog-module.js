@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.6 — динамическое обновление маркеров на карте при фильтрации
+// Версия 3.7 — динамическое обновление маркеров + всегда показывать Мультивек
 
 (function() {
     'use strict';
@@ -642,7 +642,19 @@
             // --- ФИЛЬТРЫ ---
             const matchesCountry = selectedCountry === '' || item.country === selectedCountry;
             const matchesCity = selectedCity === '' || item.city === selectedCity;
-            const matchesEra = selectedEra === '' || (item.eras && item.eras.includes(selectedEra));
+
+            // Проверка на эпоху: карточка проходит, если эпоха не выбрана, 
+            // ИЛИ если эпоха совпадает, 
+            // ИЛИ если у карточки есть тег "Мультивек" (универсальный тег)
+            let matchesEra = true;
+            if (selectedEra !== '') {
+                const hasMultiEra = item.eras && item.eras.some(era => 
+                    era.toLowerCase().includes('мультивек')
+                );
+                const hasSelectedEra = item.eras && item.eras.includes(selectedEra);
+                
+                matchesEra = hasSelectedEra || hasMultiEra;
+            }
 
             const itemRegion = getItemRegion(item.city);
             const matchesRegion = selectedRegion === '' || itemRegion === selectedRegion;
