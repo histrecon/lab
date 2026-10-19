@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.7 — динамическое обновление маркеров + всегда показывать Мультивек
+// Версия 3.8 — динамическая карта, приоритет тегов, взаимозаменяемость Античности
 
 (function() {
     'use strict';
@@ -110,7 +110,6 @@
     // ============================================================
     
     function sortErasChronologically(erasSet) {
-        // 1. Сначала строго века (до н.э. и н.э.)
         const centuriesOrder = [
             'VI в. до н.э.', 'V в. до н.э.', 'IV в. до н.э.', 'III в. до н.э.', 
             'II в. до н.э.', 'I в. до н.э.',
@@ -119,43 +118,23 @@
             'XV в.', 'XVI в.', 'XVII в.', 'XVIII в.', 'XIX в.', 'XX в.', 'XXI в.'
         ];
 
-        // 2. Затем исторические блоки и периоды
         const periodsOrder = [
-            'Древний Египет', 
-            'Хеттское царство', 
-            'Древняя Греция', 
-            'Древний Рим',
-            'Античность',
-            'Великое Переселение народов', 
-            'Средневековье', 
-            'Новое время', 
-            'Эпоха Петра I', 
-            'Наполеоника',
-            'ACW', 
-            'ПМВ', 
-            'Гражданская война', 
-            'ВОВ', 
-            'Афганская война',
-            'Япония', 
-            'Монголы',
-            'СМБ', 'БИФ', 'ИСБ', 'СБ', 'HEMA', 'Ролевка', 'Мультивек'
+            'Древний Египет', 'Хеттское царство', 'Древняя Греция', 'Древний Рим', 'Античность',
+            'Великое Переселение народов', 'Средневековье', 'Новое время', 'Эпоха Петра I', 
+            'Наполеоника', 'ACW', 'ПМВ', 'Гражданская война', 'ВОВ', 'Афганская война',
+            'Япония', 'Монголы', 'СМБ', 'БИФ', 'ИСБ', 'СБ', 'HEMA', 'Ролевка', 'Мультивек'
         ];
 
-        // Объединяем в один общий список для определения индексов
         const fullOrder = [...centuriesOrder, ...periodsOrder];
 
         return Array.from(erasSet).sort((a, b) => {
             const indexA = fullOrder.indexOf(a);
             const indexB = fullOrder.indexOf(b);
             
-            // Если оба элемента есть в списке — сортируем по индексу
             if (indexA !== -1 && indexB !== -1) return indexA - indexB;
-            // Если только A есть в списке — он идет первым
             if (indexA !== -1) return -1;
-            // Если только B есть в списке — он идет первым
             if (indexB !== -1) return 1;
             
-            // Если обоих нет в списке (неизвестные теги) — сортируем по алфавиту
             return a.localeCompare(b);
         });
     }
@@ -279,6 +258,34 @@
             </a>`;
         }
         return html;
+    }
+
+    // ============================================================
+    // ВЗАИМОЗАМЕНЯЕМОСТЬ ТЕГОВ (Античность <-> Греция/Рим)
+    // ============================================================
+    
+    function matchesEraWithSubstitution(itemEras, selectedEra) {
+        if (!itemEras) return false;
+        if (selectedEra === '') return true;
+        
+        // Прямое совпадение
+        if (itemEras.includes(selectedEra)) return true;
+        
+        // Логика взаимозаменяемости
+        const lowerSelected = selectedEra.toLowerCase();
+        const lowerEras = itemEras.map(e => e.toLowerCase());
+
+        // Если выбрана Античность -> ищем Рим или Грецию
+        if (lowerSelected === 'античность') {
+            return lowerEras.includes('древний рим') || lowerEras.includes('древняя греция');
+        }
+        
+        // Если выбрана Греция или Рим -> ищем Античность
+        if (lowerSelected === 'древняя греция' || lowerSelected === 'древний рим') {
+            return lowerEras.includes('античность');
+        }
+
+        return false;
     }
 
     // ============================================================
@@ -502,7 +509,6 @@
         sortAndAppend(state.regions, regionFilter);
         sortAndAppend(state.cities, cityFilter);
 
-        // Специальная сортировка для эпох
         if (eraFilter) {
             while (eraFilter.options.length > 1) eraFilter.remove(1);
             const sortedEras = sortErasChronologically(state.eras);
@@ -527,7 +533,6 @@
             }
         }
 
-        // События с debounce для поиска
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             let timeout;
@@ -576,7 +581,6 @@
         resetButton?.addEventListener('click', resetFilters);
     }
 
-    // Обновление списка городов в зависимости от выбранного региона
     function updateCityFilterByRegion() {
         const selectedRegion = getFilterValue('regionFilter');
         const cityFilter = document.getElementById('cityFilter');
@@ -642,33 +646,54 @@
             // --- ФИЛЬТРЫ ---
             const matchesCountry = selectedCountry === '' || item.country === selectedCountry;
             const matchesCity = selectedCity === '' || item.city === selectedCity;
-
-            // Проверка на эпоху: карточка проходит, если эпоха не выбрана, 
-            // ИЛИ если эпоха совпадает, 
-            // ИЛИ если у карточки есть тег "Мультивек" (универсальный тег)
-            let matchesEra = true;
-            if (selectedEra !== '') {
-                const hasMultiEra = item.eras && item.eras.some(era => 
-                    era.toLowerCase().includes('мультивек')
-                );
-                const hasSelectedEra = item.eras && item.eras.includes(selectedEra);
-                
-                matchesEra = hasSelectedEra || hasMultiEra;
-            }
-
             const itemRegion = getItemRegion(item.city);
             const matchesRegion = selectedRegion === '' || itemRegion === selectedRegion;
+
+            // --- ЭПОХИ (с приоритетом и взаимозаменяемостью) ---
+            let matchesEra = true;
+            let isExactEraMatch = false;
+            let isMultiEraMatch = false;
+
+            if (selectedEra !== '') {
+                const itemEras = item.eras || [];
+                
+                // Проверка на "Мультивек"
+                const hasMultiEra = itemEras.some(era => era.toLowerCase().includes('мультивек'));
+                
+                // Проверка на прямое совпадение (с учетом Античности)
+                const hasExactEra = matchesEraWithSubstitution(itemEras, selectedEra);
+
+                if (hasExactEra) {
+                    isExactEraMatch = true;
+                    matchesEra = true;
+                } else if (hasMultiEra) {
+                    isMultiEraMatch = true;
+                    matchesEra = true;
+                } else {
+                    matchesEra = false;
+                }
+            }
 
             const matchesSpecialization = selectedSpecialization === '' ||
                 (item.specialization && item.specialization.toLowerCase().includes(selectedSpecialization.toLowerCase()));
 
-            return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization;
-        });
+            // Возвращаем объект с флагами для сортировки
+            return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization
+                ? { item, isExactEraMatch, isMultiEraMatch }
+                : null;
+        })
+        .filter(Boolean) // убираем null
+        .sort((a, b) => {
+            // Сортировка: сначала точные совпадения, потом Мультивек
+            if (a.isExactEraMatch && !b.isExactEraMatch) return -1;
+            if (!a.isExactEraMatch && b.isExactEraMatch) return 1;
+            return 0;
+        })
+        .map(entry => entry.item); // возвращаем чистый массив объектов
 
         displayItems(state.filteredItems);
         updateStats();
         
-        // Обновляем маркеры на карте в соответствии с отфильтрованными данными
         addCityMarkers(state.filteredItems);
     }
 
@@ -712,22 +737,18 @@
         L.control.zoom({
             position: 'topright'
         }).addTo(state.map);
-        
-        // Вызов addCityMarkers перенесен в loadData и applyFilters
     }
 
     function addCityMarkers(itemsToDisplay) {
         if (!state.map) return;
 
-        // 1. Очищаем карту от старых маркеров
         state.map.eachLayer(function (layer) {
             if (layer instanceof L.Marker) {
                 state.map.removeLayer(layer);
             }
         });
-        state.cityMarkers = {}; // Сбрасываем сохраненные маркеры
+        state.cityMarkers = {};
 
-        // 2. Группируем переданные элементы по городам
         const itemsByCity = {};
         itemsToDisplay.forEach(item => {
             if (!itemsByCity[item.city]) {
@@ -736,7 +757,6 @@
             itemsByCity[item.city].push(item);
         });
 
-        // 3. Отрисовываем новые маркеры
         Object.keys(itemsByCity).forEach(city => {
             const cityItems = itemsByCity[city];
             const cityCoord = getCityCoordinates(city);
@@ -761,7 +781,6 @@
 
                 const marker = L.marker(cityCoord, { icon: flagIcon }).addTo(state.map);
 
-                // Собираем эпохи для этого города (из отфильтрованных элементов)
                 const eras = new Set();
                 const sampleItems = cityItems.slice(0, 3);
                 cityItems.forEach(item => {
@@ -809,10 +828,7 @@
                     </div>
                 `);
 
-                // Убираем автоматический зум при клике на маркер, чтобы карта не прыгала
-                marker.on('click', function(e) {
-                    // Пустой обработчик, чтобы перекрыть стандартное поведение
-                });
+                marker.on('click', function(e) {});
 
                 state.cityMarkers[city] = marker;
             }
@@ -980,7 +996,6 @@
 
                 if (item.eras) {
                     item.eras.forEach(era => {
-                        // Защита от пустых строк в JSON
                         if (era && era.trim() !== '') {
                             state.eras.add(era.trim());
                         }
@@ -998,7 +1013,6 @@
             displayItems(state.filteredItems);
             updateStats();
             
-            // Первичная отрисовка маркеров на карте
             addCityMarkers(state.filteredItems);
 
         } catch (error) {
