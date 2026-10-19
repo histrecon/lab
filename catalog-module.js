@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.5 — строгая хронологическая сортировка эпох (сначала века, потом блоки)
+// Версия 3.6 — динамическое обновление маркеров на карте при фильтрации
 
 (function() {
     'use strict';
@@ -655,6 +655,9 @@
 
         displayItems(state.filteredItems);
         updateStats();
+        
+        // Обновляем маркеры на карте в соответствии с отфильтрованными данными
+        addCityMarkers(state.filteredItems);
     }
 
     function resetFilters() {
@@ -697,19 +700,31 @@
         L.control.zoom({
             position: 'topright'
         }).addTo(state.map);
-
-        addCityMarkers();
+        
+        // Вызов addCityMarkers перенесен в loadData и applyFilters
     }
 
-    function addCityMarkers() {
+    function addCityMarkers(itemsToDisplay) {
+        if (!state.map) return;
+
+        // 1. Очищаем карту от старых маркеров
+        state.map.eachLayer(function (layer) {
+            if (layer instanceof L.Marker) {
+                state.map.removeLayer(layer);
+            }
+        });
+        state.cityMarkers = {}; // Сбрасываем сохраненные маркеры
+
+        // 2. Группируем переданные элементы по городам
         const itemsByCity = {};
-        state.allItems.forEach(item => {
+        itemsToDisplay.forEach(item => {
             if (!itemsByCity[item.city]) {
                 itemsByCity[item.city] = [];
             }
             itemsByCity[item.city].push(item);
         });
 
+        // 3. Отрисовываем новые маркеры
         Object.keys(itemsByCity).forEach(city => {
             const cityItems = itemsByCity[city];
             const cityCoord = getCityCoordinates(city);
@@ -734,6 +749,7 @@
 
                 const marker = L.marker(cityCoord, { icon: flagIcon }).addTo(state.map);
 
+                // Собираем эпохи для этого города (из отфильтрованных элементов)
                 const eras = new Set();
                 const sampleItems = cityItems.slice(0, 3);
                 cityItems.forEach(item => {
@@ -781,8 +797,9 @@
                     </div>
                 `);
 
-                marker.on('click', function() {
-                    selectCity(city);
+                // Убираем автоматический зум при клике на маркер, чтобы карта не прыгала
+                marker.on('click', function(e) {
+                    // Пустой обработчик, чтобы перекрыть стандартное поведение
                 });
 
                 state.cityMarkers[city] = marker;
@@ -968,6 +985,9 @@
             state.filteredItems = [...state.allItems];
             displayItems(state.filteredItems);
             updateStats();
+            
+            // Первичная отрисовка маркеров на карте
+            addCityMarkers(state.filteredItems);
 
         } catch (error) {
             console.error('Ошибка загрузки данных:', error);
