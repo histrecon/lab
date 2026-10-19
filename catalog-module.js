@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.8 — динамическая карта, приоритет тегов, взаимозаменяемость Античности
+// Версия 3.9 — исправленная фильтрация, приоритет тегов, взаимозаменяемость Античности
 
 (function() {
     'use strict';
@@ -140,6 +140,34 @@
     }
 
     // ============================================================
+    // ВЗАИМОЗАМЕНЯЕМОСТЬ ТЕГОВ (Античность <-> Греция/Рим)
+    // ============================================================
+    
+    function matchesEraWithSubstitution(itemEras, selectedEra) {
+        if (!itemEras) return false;
+        if (selectedEra === '') return true;
+        
+        // Прямое совпадение
+        if (itemEras.includes(selectedEra)) return true;
+        
+        // Логика взаимозаменяемости
+        const lowerSelected = selectedEra.toLowerCase();
+        const lowerEras = itemEras.map(e => e.toLowerCase());
+
+        // Если выбрана Античность -> ищем Рим или Грецию
+        if (lowerSelected === 'античность') {
+            return lowerEras.includes('древний рим') || lowerEras.includes('древняя греция');
+        }
+        
+        // Если выбрана Греция или Рим -> ищем Античность
+        if (lowerSelected === 'древняя греция' || lowerSelected === 'древний рим') {
+            return lowerEras.includes('античность');
+        }
+
+        return false;
+    }
+
+    // ============================================================
     // СОСТОЯНИЕ
     // ============================================================
 
@@ -258,34 +286,6 @@
             </a>`;
         }
         return html;
-    }
-
-    // ============================================================
-    // ВЗАИМОЗАМЕНЯЕМОСТЬ ТЕГОВ (Античность <-> Греция/Рим)
-    // ============================================================
-    
-    function matchesEraWithSubstitution(itemEras, selectedEra) {
-        if (!itemEras) return false;
-        if (selectedEra === '') return true;
-        
-        // Прямое совпадение
-        if (itemEras.includes(selectedEra)) return true;
-        
-        // Логика взаимозаменяемости
-        const lowerSelected = selectedEra.toLowerCase();
-        const lowerEras = itemEras.map(e => e.toLowerCase());
-
-        // Если выбрана Античность -> ищем Рим или Грецию
-        if (lowerSelected === 'античность') {
-            return lowerEras.includes('древний рим') || lowerEras.includes('древняя греция');
-        }
-        
-        // Если выбрана Греция или Рим -> ищем Античность
-        if (lowerSelected === 'древняя греция' || lowerSelected === 'древний рим') {
-            return lowerEras.includes('античность');
-        }
-
-        return false;
     }
 
     // ============================================================
@@ -624,7 +624,8 @@
         const selectedEra = getFilterValue('eraFilter');
         const selectedSpecialization = getFilterValue('specializationFilter');
 
-        state.filteredItems = state.allItems.filter(item => {
+        // 1. Отбираем подходящие элементы
+        let filtered = state.allItems.filter(item => {
             // --- ПОИСК ---
             let matchesSearch = true;
             if (searchTerm !== '') {
@@ -649,51 +650,47 @@
             const itemRegion = getItemRegion(item.city);
             const matchesRegion = selectedRegion === '' || itemRegion === selectedRegion;
 
-            // --- ЭПОХИ (с приоритетом и взаимозаменяемостью) ---
+            // --- ЭПОХИ ---
             let matchesEra = true;
-            let isExactEraMatch = false;
-            let isMultiEraMatch = false;
-
             if (selectedEra !== '') {
                 const itemEras = item.eras || [];
-                
-                // Проверка на "Мультивек"
                 const hasMultiEra = itemEras.some(era => era.toLowerCase().includes('мультивек'));
-                
-                // Проверка на прямое совпадение (с учетом Античности)
                 const hasExactEra = matchesEraWithSubstitution(itemEras, selectedEra);
-
-                if (hasExactEra) {
-                    isExactEraMatch = true;
-                    matchesEra = true;
-                } else if (hasMultiEra) {
-                    isMultiEraMatch = true;
-                    matchesEra = true;
-                } else {
-                    matchesEra = false;
-                }
+                
+                // Пропускаем, если есть точное совпадение ИЛИ если есть Мультивек
+                matchesEra = hasExactEra || hasMultiEra;
             }
 
             const matchesSpecialization = selectedSpecialization === '' ||
                 (item.specialization && item.specialization.toLowerCase().includes(selectedSpecialization.toLowerCase()));
 
-            // Возвращаем объект с флагами для сортировки
-            return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization
-                ? { item, isExactEraMatch, isMultiEraMatch }
-                : null;
-        })
-        .filter(Boolean) // убираем null
-        .sort((a, b) => {
-            // Сортировка: сначала точные совпадения, потом Мультивек
-            if (a.isExactEraMatch && !b.isExactEraMatch) return -1;
-            if (!a.isExactEraMatch && b.isExactEraMatch) return 1;
-            return 0;
-        })
-        .map(entry => entry.item); // возвращаем чистый массив объектов
+            return matchesSearch && matchesCountry && matchesRegion && matchesCity && matchesEra && matchesSpecialization;
+        });
 
+        // 2. Сортируем: сначала те, у кого есть точное совпадение эпохи (или взаимозаменяемое),
+        //    потом те, у кого только Мультивек.
+        if (selectedEra !== '') {
+            filtered.sort((a, b) => {
+                const aEras = a.eras || [];
+                const bEras = b.eras || [];
+                
+                const aExact = matchesEraWithSubstitution(aEras, selectedEra);
+                const bExact = matchesEraWithSubstitution(bEras, selectedEra);
+
+                if (aExact && !bExact) return -1;
+                if (!aExact && bExact) return 1;
+                return 0;
+            });
+        }
+
+        // 3. Сохраняем отфильтрованный массив
+        state.filteredItems = filtered;
+
+        // 4. Обновляем интерфейс
         displayItems(state.filteredItems);
         updateStats();
         
+        // 5. Обновляем маркеры на карте
         addCityMarkers(state.filteredItems);
     }
 
