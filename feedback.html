@@ -34,7 +34,7 @@
     <!-- Подключаем общие стили -->
     <link rel="stylesheet" href="catalog-styles.css">
     
-    <!-- Дополнительные стили для чекбокса согласия и тегов -->
+    <!-- Дополнительные стили для чекбокса согласия, тегов и модального окна -->
     <style>
         /* ============================================================
            ЧЕКБОКС СОГЛАСИЯ НА ОБРАБОТКУ ДАННЫХ
@@ -142,6 +142,7 @@
             text-decoration: underline;
             font-weight: 600;
             transition: color var(--transition);
+            cursor: pointer;
         }
         
         .consent-link:hover {
@@ -235,25 +236,112 @@
             accent-color: #fff;
         }
 
-        /* Поле для ручного ввода */
-        .manual-input-group {
-            margin-top: 12px;
-            padding: 12px 15px;
-            background: rgba(255, 248, 240, 0.4);
-            border: 1px dashed var(--color-border);
-            border-radius: var(--radius);
+        /* ============================================================
+           МОДАЛЬНОЕ ОКНО ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ
+           ============================================================ */
+        .privacy-modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(20, 15, 10, 0.85);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+            backdrop-filter: blur(5px);
         }
 
-        .manual-input-group .form-label {
-            font-size: 0.95rem;
-            margin-bottom: 6px;
-            color: var(--color-brown-light);
+        .privacy-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
         }
 
-        .manual-input-group .form-input {
-            padding: 10px 14px;
+        .privacy-modal-content {
+            background: linear-gradient(160deg, #fef9f3 0%, #f5ebd8 100%);
+            border-radius: 20px;
+            padding: 30px 40px;
+            width: 100%;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            border: 2px solid var(--color-border);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+            position: relative;
+            animation: modalAppear 0.3s ease;
+        }
+
+        @keyframes modalAppear {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        .privacy-modal-content::-webkit-scrollbar { width: 6px; }
+        .privacy-modal-content::-webkit-scrollbar-thumb {
+            background: #d4a574;
+            border-radius: 10px;
+        }
+
+        .privacy-modal-close {
+            position: sticky;
+            float: right;
+            top: 0;
+            background: rgba(255, 248, 240, 0.85);
+            border: 1px solid var(--color-border);
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: var(--color-brown);
+            font-size: 20px;
+            font-weight: bold;
+            z-index: 5;
+            margin-top: -10px;
+            margin-right: -10px;
+        }
+
+        .privacy-modal-close:hover {
+            background: #ffe4c4;
+            transform: rotate(90deg);
+        }
+
+        .privacy-modal-content h2 {
+            font-family: 'Cinzel', serif;
+            color: #2c1810;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            text-align: center;
+            clear: both;
+        }
+
+        .privacy-modal-content h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--color-brown);
+            font-size: 1.2rem;
+            margin: 20px 0 10px;
+        }
+
+        .privacy-modal-content p {
+            color: var(--color-text-light);
             font-size: 0.95rem;
-            background: rgba(255, 252, 248, 0.9);
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 480px) {
+            .privacy-modal-content {
+                padding: 20px;
+                border-radius: 16px;
+            }
+            .privacy-modal-content h2 {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
@@ -319,11 +407,6 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
-                        <div class="manual-input-group">
-                            <label class="form-label" for="clubErasManual">Дополнительные эпохи (вручную)</label>
-                            <input type="text" class="form-input" id="clubErasManual" placeholder="Например: XVIII в., Ренессанс, Смутное время...">
-                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="clubWebsite">
@@ -354,11 +437,6 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
-                        <div class="manual-input-group">
-                            <label class="form-label" for="festivalErasManual">Дополнительные эпохи (вручную)</label>
-                            <input type="text" class="form-input" id="festivalErasManual" placeholder="Например: XVIII в., Ренессанс...">
-                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="festivalWebsite">
@@ -377,11 +455,6 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие специализации из списка</span>
-                        <div class="manual-input-group">
-                            <label class="form-label" for="shopSpecializationManual">Дополнительная специализация (вручную)</label>
-                            <input type="text" class="form-input" id="shopSpecializationManual" placeholder="Например: плетение из лозы, косторезное дело...">
-                            <span class="form-hint">Укажите через запятую, если нужной специализации нет в списке</span>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Исторические эпохи</label>
@@ -389,11 +462,6 @@
                             <!-- Сюда JS будет вставлять чекбоксы -->
                         </div>
                         <span class="form-hint">Выберите все подходящие эпохи из списка</span>
-                        <div class="manual-input-group">
-                            <label class="form-label" for="shopErasManual">Дополнительные эпохи (вручную)</label>
-                            <input type="text" class="form-input" id="shopErasManual" placeholder="Например: XVIII в., Ренессанс...">
-                            <span class="form-hint">Укажите через запятую, если нужной эпохи нет в списке</span>
-                        </div>
                     </div>
                     <div class="form-group">
                         <label class="form-label" for="shopWebsite">
@@ -429,23 +497,14 @@
                     </span>
                 </div>
                 
-                <!-- Имя -->
-                <div class="form-group">
-                    <label class="form-label" for="userName">
-                        Ваше имя (по желанию)
-                    </label>
-                    <input type="text" class="form-input" id="userName" name="userName" placeholder="Как к вам обращаться">
-                </div>
-                
                 <!-- ЧЕКБОКС СОГЛАСИЯ -->
                 <div class="form-group consent-group">
                     <label class="consent-label" for="consentCheckbox">
                         <input type="checkbox" id="consentCheckbox" name="consent" required>
                         <span class="consent-checkmark"></span>
                         <span class="consent-text">
-                            Я согласен(а) на обработку моих персональных данных 
-                            (имя, город, страна, контактные данные) в целях добавления информации 
-                            в Единую базу исторической реконструкции — РеконХаб.
+                            Я согласен(а) на обработку анкеты с предоставленными данными (название клуба/магазина/мероприятия, город, страна, ссылки на веб-сайт и группу ВК) для размещения в базе РеконХаб. 
+                            Ознакомлен(а) с <a href="#" id="openPrivacyPolicy" class="consent-link">Политикой конфиденциальности</a>.
                         </span>
                     </label>
                     <span class="form-hint">Обязательное поле — без согласия форма не отправится</span>
@@ -482,6 +541,29 @@
             </div>
         </div>
     </div>
+
+    <!-- МОДАЛЬНОЕ ОКНО ПОЛИТИКИ КОНФИДЕНЦИАЛЬНОСТИ -->
+    <div class="privacy-modal-overlay" id="privacyModal">
+        <div class="privacy-modal-content">
+            <button class="privacy-modal-close" id="closePrivacyModal" aria-label="Закрыть">&times;</button>
+            <h2>Политика конфиденциальности сайта reconhub.ru</h2>
+            
+            <h3>Общие положения</h3>
+            <p>Сайт РеконХаб является общественным некоммерческим проектом, созданным для популяризации исторической реконструкции.</p>
+            
+            <h3>Какие данные мы собираем и публикуем</h3>
+            <p>Мы собираем только ту информацию, которую вы добровольно предоставляете через форму обратной связи: название клуба/магазина/мероприятия, город, страну, ссылки на сайты и социальные сети, а также описание вашей деятельности. Мы не запрашиваем паспортные данные, номера телефонов и домашние адреса. Связь с представителями клубов и магазинов осуществляется исключительно через публичные ссылки (ВКонтакте и веб-сайты).</p>
+            
+            <h3>Цели сбора</h3>
+            <p>Предоставленная информация используется исключительно для формирования и пополнения каталога исторической реконструкции.</p>
+            
+            <h3>Удаление данных</h3>
+            <p>Вы в любой момент можете попросить удалить информацию о вашем клубе, магазине или мероприятии с сайта, написав нам на почту <strong>ReconHub@yandex.ru</strong> или в сообщения ВК.</p>
+            
+            <h3>Согласие</h3>
+            <p>Отправляя анкету, вы соглашаетесь с публикацией указанной информации в открытом доступе на сайте reconhub.ru.</p>
+        </div>
+    </div>
     
     <script>
         // ============================================================
@@ -512,46 +594,27 @@
         }
 
         // ============================================================
-        // СПИСКИ ТЕГОВ (полные, с учётом всех JSON)
+        // СПИСКИ ТЕГОВ
         // ============================================================
         const AVAILABLE_ERAS = [
-            // Века до н.э.
-            "XV в. до н.э.", "XIV в. до н.э.", "XIII в. до н.э.",
-            "VI в. до н.э.", "V в. до н.э.", "II в. до н.э.", "I в. до н.э.",
-            // Века н.э.
-            "I в.", "II в.", "III в.", "IV в.", "V в.", "VI в.", "VII в.", "VIII в.",
-            "IX в.", "X в.", "XI в.", "XII в.", "XIII в.", "XIV в.", "XV в.",
+            "VIII в.", "IX в.", "X в.", "XI в.", "XII в.", "XIII в.", "XIV в.", "XV в.",
             "XVI в.", "XVII в.", "XVIII в.", "XIX в.", "XX в.", "XXI в.",
-            // Крупные периоды и направления
             "Древний Египет", "Древняя Греция", "Древний Рим", "Хеттское царство",
             "Средневековье", "Мультивек", "Эпоха Петра I", "Наполеоника",
-            "Великое Переселение народов", "Монголы",
             "ACW", "ПМВ", "Гражданская война", "ВОВ", "Афганская война",
-            "Япония", "ИСБ", "СМБ", "HEMA", "СБ", "БИФ", "Ролевка",
-            // Служебные
-            "Не указано"
+            "Япония", "ИСБ", "СМБ", "HEMA", "СБ", "БИФ", "Ролевка"
         ];
 
         const AVAILABLE_SPECIALIZATIONS = [
-            // Кузнечное дело
             "Кузнец-оружейник", "Кузнец-бронник", "Кузнец-инструментальщик",
-            "Кузнец-художественный", "Древодел-оружейник",
-            // Металлообработка и литьё
-            "Литьё", "Фурнитура", "Чеканка-гравировка", "Мастер по всечке",
-            // Ткани и текстиль
-            "Ткани", "Тканые изделия", "Пряжа-нитки", "Вязание",
-            "Валяние из шерсти", "Шитье одежды", "Шитье палаток",
-            // Кожа и обувь
-            "Обувное дело", "Кожгалантерея", "Натуральный мех",
-            // Дерево и кость
-            "Столярное дело", "Резьба по дереву", "Резьба по кости",
-            "Питейные/сигнальные рога",
-            // Прочее ремесло
-            "Гончарное дело", "Настольные игры",
-            // Ролевое и защита
-            "Ролевой стафф", "Скрытая защита", "Инструменты для реконструкторов",
-            // Дополнительные (из specialization-info.js)
-            "Прядение", "Ткачество", "Кожевенное дело", "Ювелирное дело"
+            "Кузнец-художественный", "Древодел-оружейник", "Фурнитура",
+            "Чеканка-гравировка", "Мастер по всечке", "Литьё", "Ткани",
+            "Тканые изделия", "Пряжа-нитки", "Вязание", "Валяние из шерсти",
+            "Шитье одежды", "Шитье палаток", "Обувное дело", "Кожгалантерея",
+            "Натуральный мех", "Гончарное дело", "Столярное дело",
+            "Резьба по дереву", "Резьба по кости", "Питейные/сигнальные рога",
+            "Настольные игры", "Ролевой стафф", "Скрытая защита",
+            "Инструменты для реконструкторов"
         ];
 
         // ============================================================
@@ -586,30 +649,13 @@
         }
 
         // ============================================================
-        // ПОЛУЧЕНИЕ ВЫБРАННЫХ ЗНАЧЕНИЙ (чекбоксы + ручной ввод)
+        // ПОЛУЧЕНИЕ ВЫБРАННЫХ ЗНАЧЕНИЙ
         // ============================================================
-        function getSelectedValues(containerId, manualInputId) {
+        function getSelectedValues(containerId) {
             const container = document.getElementById(containerId);
-            const manualInput = document.getElementById(manualInputId);
-            let values = [];
-
-            // Собираем отмеченные чекбоксы
-            if (container) {
-                const checked = container.querySelectorAll('input[type="checkbox"]:checked');
-                values = Array.from(checked).map(cb => cb.value);
-            }
-
-            // Добавляем значения из ручного ввода
-            if (manualInput) {
-                const manualText = manualInput.value.trim();
-                if (manualText) {
-                    const manualValues = manualText.split(',').map(s => s.trim()).filter(s => s);
-                    values = values.concat(manualValues);
-                }
-            }
-
-            // Убираем дубликаты (на случай, если вручную ввели то же, что было в чекбоксах)
-            return [...new Set(values)];
+            if (!container) return [];
+            const checked = container.querySelectorAll('input[type="checkbox"]:checked');
+            return Array.from(checked).map(cb => cb.value);
         }
 
         // ============================================================
@@ -701,7 +747,7 @@
         }
 
         // ============================================================
-        // ФОРМАТИРОВАНИЕ СООБЩЕНИЯ
+        // ФОРМАТИРОВАНИЕ СООБЩЕНИЯ (Поле "Имя" удалено)
         // ============================================================
 
         function formatMessage(data) {
@@ -763,10 +809,6 @@
             var fieldLabel = (data.type === 'feedback') ? '📝 Сообщение' : '📝 Описание';
             message += '\n' + fieldLabel + ':\n' + data.description + '\n\n';
             
-            if (data.userName && data.userName !== 'Аноним') {
-                message += '👤 Отправитель: ' + data.userName + '\n';
-            }
-            
             message += '✅ Согласие на обработку данных: получено\n';
             message += '⏰ Время отправки: ' + data.timestamp + '\n';
             message += '🔗 Страница: ' + window.location.href + '\n\n';
@@ -779,7 +821,7 @@
         }
 
         // ============================================================
-        // ОБРАБОТКА ФОРМЫ
+        // ОБРАБОТКА ФОРМЫ И МОДАЛЬНОГО ОКНА
         // ============================================================
 
         function initForm() {
@@ -800,6 +842,36 @@
                     }
                 });
             }
+
+            // === МОДАЛЬНОЕ ОКНО ПОЛИТИКИ ===
+            var privacyModal = document.getElementById('privacyModal');
+            var openPrivacyBtn = document.getElementById('openPrivacyPolicy');
+            var closePrivacyBtn = document.getElementById('closePrivacyModal');
+
+            if (openPrivacyBtn && privacyModal) {
+                openPrivacyBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    privacyModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+            }
+
+            if (closePrivacyBtn && privacyModal) {
+                closePrivacyBtn.addEventListener('click', function() {
+                    privacyModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
+
+            if (privacyModal) {
+                privacyModal.addEventListener('click', function(e) {
+                    if (e.target === privacyModal) {
+                        privacyModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            // ==================================
             
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -812,7 +884,7 @@
                 
                 // Проверка согласия на обработку данных
                 if (!consentCheckbox.checked) {
-                    showNotification('Пожалуйста, подтвердите согласие на обработку персональных данных', true);
+                    showNotification('Пожалуйста, подтвердите согласие на обработку данных', true);
                     var consentGroup = document.querySelector('.consent-group');
                     if (consentGroup) consentGroup.classList.add('error');
                     consentCheckbox.focus();
@@ -829,7 +901,6 @@
                     country: document.getElementById('country').value.trim(),
                     vk: document.getElementById('vk').value.trim(),
                     description: document.getElementById('description').value.trim(),
-                    userName: document.getElementById('userName').value.trim() || 'Аноним',
                     timestamp: new Date().toLocaleString('ru-RU', { 
                         day: 'numeric', month: 'long', year: 'numeric',
                         hour: '2-digit', minute: '2-digit'
@@ -838,7 +909,7 @@
                 
                 // Дополнительные поля для клубов
                 if (type === 'club') {
-                    formData.eras = getSelectedValues('clubErasGroup', 'clubErasManual');
+                    formData.eras = getSelectedValues('clubErasGroup');
                     formData.clubWebsite = document.getElementById('clubWebsite').value.trim();
                 }
                 
@@ -849,14 +920,14 @@
                         showNotification('Пожалуйста, выберите тип мероприятия', true);
                         return;
                     }
-                    formData.festivalEras = getSelectedValues('festivalErasGroup', 'festivalErasManual');
+                    formData.festivalEras = getSelectedValues('festivalErasGroup');
                     formData.festivalWebsite = document.getElementById('festivalWebsite').value.trim();
                 }
                 
                 // Дополнительные поля для магазинов
                 if (type === 'shop') {
-                    formData.specialization = getSelectedValues('shopSpecializationGroup', 'shopSpecializationManual');
-                    formData.shopEras = getSelectedValues('shopErasGroup', 'shopErasManual');
+                    formData.specialization = getSelectedValues('shopSpecializationGroup');
+                    formData.shopEras = getSelectedValues('shopErasGroup');
                     formData.shopWebsite = document.getElementById('shopWebsite').value.trim();
                 }
                 
