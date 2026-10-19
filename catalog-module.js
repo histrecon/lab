@@ -1,5 +1,5 @@
 // catalog-module.js - Единый модуль для страниц каталога
-// Версия 3.4 — поиск по описанию, центрирование карты на регионе
+// Версия 3.5 — строгая хронологическая сортировка эпох (сначала века, потом блоки)
 
 (function() {
     'use strict';
@@ -106,6 +106,61 @@
     };
 
     // ============================================================
+    // ХРОНОЛОГИЧЕСКАЯ СОРТИРОВКА ЭПОХ
+    // ============================================================
+    
+    function sortErasChronologically(erasSet) {
+        // 1. Сначала строго века (до н.э. и н.э.)
+        const centuriesOrder = [
+            'VI в. до н.э.', 'V в. до н.э.', 'IV в. до н.э.', 'III в. до н.э.', 
+            'II в. до н.э.', 'I в. до н.э.',
+            'I в.', 'II в.', 'III в.', 'IV в.', 'V в.', 'VI в.', 'VII в.', 
+            'VIII в.', 'IX в.', 'X в.', 'XI в.', 'XII в.', 'XIII в.', 'XIV в.', 
+            'XV в.', 'XVI в.', 'XVII в.', 'XVIII в.', 'XIX в.', 'XX в.', 'XXI в.'
+        ];
+
+        // 2. Затем исторические блоки и периоды
+        const periodsOrder = [
+            'Древний Египет', 
+            'Хеттское царство', 
+            'Древняя Греция', 
+            'Древний Рим',
+            'Античность',
+            'Великое Переселение народов', 
+            'Средневековье', 
+            'Новое время', 
+            'Эпоха Петра I', 
+            'Наполеоника',
+            'ACW', 
+            'ПМВ', 
+            'Гражданская война', 
+            'ВОВ', 
+            'Афганская война',
+            'Япония', 
+            'Монголы',
+            'СМБ', 'БИФ', 'ИСБ', 'СБ', 'HEMA', 'Ролевка', 'Мультивек'
+        ];
+
+        // Объединяем в один общий список для определения индексов
+        const fullOrder = [...centuriesOrder, ...periodsOrder];
+
+        return Array.from(erasSet).sort((a, b) => {
+            const indexA = fullOrder.indexOf(a);
+            const indexB = fullOrder.indexOf(b);
+            
+            // Если оба элемента есть в списке — сортируем по индексу
+            if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+            // Если только A есть в списке — он идет первым
+            if (indexA !== -1) return -1;
+            // Если только B есть в списке — он идет первым
+            if (indexB !== -1) return 1;
+            
+            // Если обоих нет в списке (неизвестные теги) — сортируем по алфавиту
+            return a.localeCompare(b);
+        });
+    }
+
+    // ============================================================
     // СОСТОЯНИЕ
     // ============================================================
 
@@ -175,7 +230,6 @@
         return input ? input.value.toLowerCase().trim() : '';
     }
 
-    // <-- НОВОЕ: проверяем, включён ли поиск по описаниям
     function isSearchInDescriptionEnabled() {
         const checkbox = document.getElementById('searchInDescription');
         return checkbox ? checkbox.checked : true;
@@ -238,8 +292,7 @@
 
         const eraTags = item.eras ? renderEraTags(item.eras, config.eraTagClass) : '';
         const description = item.description || 'Описание отсутствует';
-        const needsDescTruncate = needsTruncate(description);
-
+        
         const itemRegion = getItemRegion(item.city);
 
         let bodyContent = '';
@@ -448,7 +501,18 @@
         sortAndAppend(state.countries, countryFilter);
         sortAndAppend(state.regions, regionFilter);
         sortAndAppend(state.cities, cityFilter);
-        sortAndAppend(state.eras, eraFilter);
+
+        // Специальная сортировка для эпох
+        if (eraFilter) {
+            while (eraFilter.options.length > 1) eraFilter.remove(1);
+            const sortedEras = sortErasChronologically(state.eras);
+            sortedEras.forEach(value => {
+                const option = document.createElement('option');
+                option.value = value;
+                option.textContent = value;
+                eraFilter.appendChild(option);
+            });
+        }
 
         if (state.type === 'shops') {
             const specFilter = document.getElementById('specializationFilter');
@@ -473,11 +537,9 @@
             });
         }
 
-        // <-- НОВОЕ: обработчик чекбокса "Искать в описаниях"
         const descCheckbox = document.getElementById('searchInDescription');
         if (descCheckbox) {
             descCheckbox.addEventListener('change', function() {
-                // Если в поиске уже есть текст — сразу применяем фильтр
                 if (getSearchTerm() !== '') {
                     applyFilters();
                 }
@@ -486,12 +548,10 @@
 
         countryFilter?.addEventListener('change', applyFilters);
 
-        // <-- ОБНОВЛЕНО: обработчик для фильтра регионов
         regionFilter?.addEventListener('change', function() {
             updateCityFilterByRegion();
             applyFilters();
 
-            // Центрируем карту на выбранном регионе
             const selectedRegion = this.value;
             if (selectedRegion && state.map) {
                 centerMapOnRegion(selectedRegion);
@@ -606,7 +666,6 @@
         const specFilter = document.getElementById('specializationFilter');
         if (specFilter) specFilter.value = '';
 
-        // Сбрасываем чекбокс "Искать в описаниях"
         const descCheckbox = document.getElementById('searchInDescription');
         if (descCheckbox) descCheckbox.checked = true;
 
@@ -743,10 +802,6 @@
         }
     }
 
-    /**
-     * Центрирует карту на регионе: вычисляет средние координаты всех городов региона
-     * и подбирает подходящий зум в зависимости от разброса точек.
-     */
     function centerMapOnRegion(regionName) {
         if (!state.map || !regionName) return;
 
@@ -760,7 +815,6 @@
 
         if (coords.length === 0) return;
 
-        // Если город один — просто центрируемся на нём
         if (coords.length === 1) {
             state.map.setView(coords[0], CONFIG.map.cityZoom);
             return;
@@ -781,18 +835,17 @@
 
         const center = [sumLat / coords.length, sumLng / coords.length];
 
-        // Подбираем зум по разбросу координат
         const latSpan = maxLat - minLat;
         const lngSpan = maxLng - minLng;
         const maxSpan = Math.max(latSpan, lngSpan);
 
         let zoom;
-        if (maxSpan < 0.5)       zoom = 10;  // Москва и окрестности
-        else if (maxSpan < 1.5)  zoom = 9;   // Московская область
-        else if (maxSpan < 3)    zoom = 8;   // Несколько областей
-        else if (maxSpan < 8)    zoom = 7;   // Большой регион
-        else if (maxSpan < 20)   zoom = 6;   // Крупный ФО
-        else                     zoom = 5;   // Полстраны
+        if (maxSpan < 0.5)       zoom = 10;
+        else if (maxSpan < 1.5)  zoom = 9;
+        else if (maxSpan < 3)    zoom = 8;
+        else if (maxSpan < 8)    zoom = 7;
+        else if (maxSpan < 20)   zoom = 6;
+        else                     zoom = 5;
 
         state.map.setView(center, zoom, { animate: true });
     }
@@ -897,7 +950,12 @@
                 state.regions.add(getItemRegion(item.city));
 
                 if (item.eras) {
-                    item.eras.forEach(era => state.eras.add(era));
+                    item.eras.forEach(era => {
+                        // Защита от пустых строк в JSON
+                        if (era && era.trim() !== '') {
+                            state.eras.add(era.trim());
+                        }
+                    });
                 }
                 if (state.type === 'shops' && item.specialization) {
                     const specs = item.specialization.split(',').map(s => s.trim()).filter(s => s);
