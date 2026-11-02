@@ -657,8 +657,15 @@
                 const hasMultiEra = itemEras.some(era => era.toLowerCase().includes('мультивек'));
                 const hasExactEra = matchesEraWithSubstitution(itemEras, selectedEra);
                 
-                // Пропускаем, если есть точное совпадение ИЛИ если есть Мультивек
-                matchesEra = hasExactEra || hasMultiEra;
+                // Список направлений, при которых Мультивек НЕ должен показываться
+                const strictEras = ['СМБ', 'БИФ', 'ИСБ', 'СБ', 'HEMA', 'Ролевка'];
+                const isStrictEra = strictEras.includes(selectedEra.toLowerCase());
+                
+                // Логика:
+                // 1. Если есть точное совпадение — показываем (например, клуб именно с тегом ИСБ)
+                // 2. Если выбрана строгая эпоха (ИСБ, СМБ и т.д.) — Мультивек не показываем
+                // 3. В остальных случаях (например, выбрали "XIII в.") — Мультивек показываем
+                matchesEra = hasExactEra || (!isStrictEra && hasMultiEra);
             }
 
             const matchesSpecialization = selectedSpecialization === '' ||
